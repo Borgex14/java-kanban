@@ -44,14 +44,6 @@ public class Main {
         System.out.println("Подзадачи ID 5: " + taskManager.getSubtaskById(5));
         System.out.println("Подзадачи ID 6: " + taskManager.getSubtaskById(6));
 
-        // Добавление ID подзадачи
-        epic1.addSubtaskIds(1);
-        epic2.addSubtaskIds(2);
-        // Удалить по ID
-        epic1.removeSubtaskId (1);
-        // Вывод ID задачи
-        System.out.println("ID подзадачи эпика 1: " + epic1.getSubtaskIds());
-        System.out.println("ID подзадачи эпика 2: " + epic2.getSubtaskIds());
 
         // Вывод статус задач, эпиков и подзадач после удаления
         System.out.println("Статус задачи: " + task1.getStatus());
@@ -61,6 +53,9 @@ public class Main {
         // Добавление поздачи в эпиках
         epic1.addSubtask(subtask1);
         epic2.addSubtask(subtask2);
+
+        // Получать подзадачи Эпика по ID
+        System.out.println("Подзадачи эпика по ID 3: " + taskManager.getSubtasksOfEpic(3));
 
         // Выводим все задачи, эпики и подзадачи после добавления подзадчи в эпиках
         System.out.println("Задачи: " + taskManager.getAllTasks());
@@ -86,6 +81,10 @@ public class Main {
         // Удалить эпики по ID
         taskManager.deleteEpicById(4);
         System.out.println("Эпики: " + taskManager.getAllEpics());
+
+        // удалить все эпики
+        taskManager.deleteEpics();
+        System.out.println("Подзадачи: " + taskManager.getAllSubtasks());
 
         // Удалить задачи по ID
         taskManager.deleteTaskById(1);

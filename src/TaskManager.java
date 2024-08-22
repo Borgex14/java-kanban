@@ -27,28 +27,14 @@ public class TaskManager {
 
     // Удаление эпиков
     public void deleteEpics() {
-        // Сначала находим все ID эпиков
-        ArrayList<Integer> epicIds = new ArrayList<>(epics.keySet());
-        // Удаляем подзадачи, связанные с каждым эпиком
-        for (Integer epicId : epicIds) {
-            // Создаем список ID подзадач, которые нужно удалить
-            ArrayList<Integer> subtasksToRemove = new ArrayList<>();
-            // Проходим по всем подзадачам
-            for (Subtask subtask : subtasks.values()) {
-                // Проверяем, относится ли подзадача к текущему эпику
-                if (subtask.getParentTaskID() == epicId) {
-                    // Если да, добавляем ID подзадачи в список на удаление
-                    subtasksToRemove.add(subtask.getId());
-                }
-            }
-            // Удаляем все подзадачи, которые необходимо удалить
-            for (Integer subtaskId : subtasksToRemove) {
-                subtasks.remove(subtaskId);
-            }
-        }
+        // Удаляем все подзадачи
+        subtasks.clear();
 
         // Очищаем коллекцию эпиков
         epics.clear();
+
+        // Выводим сообщение о завершении операции
+        System.out.println("Все эпики и их подзадачи были удалены.");
     }
 
     public void deleteSubtasks() {
@@ -94,15 +80,21 @@ public class TaskManager {
 
     public void createSubtask(Subtask subtask) {
         Epic epic = epics.get(subtask.getParentTaskID());
+
+        // Проверяем, существует ли эпик
         if (epic != null) {
+            // Присваиваем уникальный ID из счетчика, если ID не установлен
+            if (subtask.getId() <= 0) {
+                subtask.setId(nextId); // Присваиваем уникальный ID
+                nextId++; // Увеличиваем счетчик
+            }
+
+            // Добавляем подзадачу к эпике и сохраняем в коллекцию подзадач
             epic.addSubtask(subtask);
+            subtasks.put(subtask.getId(), subtask);
+        } else {
+            System.out.println("Не удалось создать подзадачу, так как эпик с ID " + subtask.getParentTaskID() + " не существует.");
         }
-        // Проверяем, если ID не установлен (например, равен 0 или -1)
-        if (subtask.getId() <= 0) {
-            subtask.setId(nextId); // Присваиваем уникальный ID из счетчика
-            nextId++; // Увеличиваем счетчик
-        }
-        subtasks.put(subtask.getId(), subtask);
     }
 
     // Обновление задачи
@@ -126,15 +118,11 @@ public class TaskManager {
             // Обновляем только имя и описание
             existingEpic.setTitle(epic.getTitle());
             existingEpic.setDescription(epic.getDescription());
-
             // Статус и список подзадач не обновляются, так как они зависят от подзадач
-            // Вызываем метод для пересчета статуса эпика на основе подзадач
-            existingEpic.updateStatus();
         } else {
             // Эпик с данным ID не найден, ничего не делаем
             System.out.println("Эпик с ID " + epic.getId() + " не существует.");
         }
-        epics.put(epic.getId(), epic);
     }
 
     public void updateSubtask(Subtask subtask) {
@@ -174,11 +162,11 @@ public class TaskManager {
             Epic epic = epics.get(id);
 
             // 2) Получаем список подзадач, связанных с эпиком
-            ArrayList<Integer> subtaskIds = epic.getSubtaskIds(); // Предполагаем, что у вас есть метод для получения IDs подзадач
+            ArrayList<Subtask> subtasks = epic.getSubtasks(); // Предполагаем, что у вас есть метод для получения подзадач
 
             // 3) Удаляем все связанные подзадачи
-            for (Integer subtaskId : subtaskIds) {
-                subtasks.remove(subtaskId);
+            for (Subtask subtask : new ArrayList<>(subtasks)) {
+                subtasks.remove(subtask);
             }
 
             // 4) Удаляем сам эпик
@@ -201,7 +189,7 @@ public class TaskManager {
 
             if (epic != null) {
                 // 3) Удаляем идентификатор подзадачи из эпика
-                epic.removeSubtaskId(id); //
+                epic.removeSubtaskById(id); //
 
                 // 4) Обновление статуса эпика
                 epic.updateStatus();
@@ -223,12 +211,11 @@ public class TaskManager {
 
         // Проверяем, существует ли эпику и, если да, получаем связанные с ним подзадачи
         if (epic != null) {
-            // Получаем идентификаторы подзадач, клиент должен уже иметь данные
-            ArrayList<Integer> subtaskIds = epic.getSubtaskIds();
+            // Получаем подзадач, клиент должен уже иметь данные
+            ArrayList<Subtask> subtasks = epic.getSubtasks();
 
-            // Проходим по идентификаторам подзадач и добавляем соответствующие подзадачи в список
-            for (Integer subtaskId : subtaskIds) {
-                Subtask subtask = subtasks.get(subtaskId);
+            // Проходим по подзадачам и добавляем соответствующие подзадачи в список
+            for (Subtask subtask : subtasks) {
                 if (subtask != null) {
                     epicSubtasks.add(subtask);
                 }
