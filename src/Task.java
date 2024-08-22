@@ -5,12 +5,18 @@ public class Task {
     private int id;                 // Уникальный идентификационный номер задачи
     private TaskStatus status;      // Статус задачи
 
-    // Конструктор для инициализации задачи
-    public Task(String title, String description, int id) {
+    // Конструктор для инициализации задачи:
+    // Конструктор с названием и описанием
+    public Task(String title, String description, TaskStatus status) {
+        this.title = title;
+        this.description = description;
+        this.status = status;
+    }
+    public Task(String title, String description, TaskStatus status, int id) {
         this.title = title;
         this.description = description;
         this.id = id;
-        this.status = TaskStatus.NEW; // По умолчанию задача создаётся в статусе NEW
+        this.status = status;
     }
 
     // Геттеры и сеттеры
