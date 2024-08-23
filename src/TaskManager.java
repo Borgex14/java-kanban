@@ -127,14 +127,14 @@ public class TaskManager {
     }
 
     public void deleteSubtaskById(int id) {
-        Subtask subtask = subtasks.get(id);
+        Subtask subtask = subtasks.remove(id);
         if (subtask != null) {
             Epic epic = epics.get(subtask.getParentTaskID());
             if (epic != null) {
                 epic.removeSubtask(subtask);
                 epic.updateStatus();
             }
-            System.out.println("Подзадача с ID " + id + " была удалены.");
+            System.out.println("Подзадача с ID " + id + " была успешно удалена.");
         } else {
             System.out.println("Подзадача с ID " + id + " не существует. Удаление невоможно.");
         }
