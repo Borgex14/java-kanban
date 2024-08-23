@@ -1,17 +1,16 @@
 public class Task {
 
-    private String title;           // Название задачи
-    private String description;     // Описание задачи
-    private int id;                 // Уникальный идентификационный номер задачи
-    private TaskStatus status;      // Статус задачи
+    private String title;
+    private String description;
+    private int id;
+    private TaskStatus status;
 
-    // Конструктор для инициализации задачи:
-    // Конструктор с названием и описанием
     public Task(String title, String description, TaskStatus status) {
         this.title = title;
         this.description = description;
         this.status = status;
     }
+
     public Task(String title, String description, TaskStatus status, int id) {
         this.title = title;
         this.description = description;
@@ -19,7 +18,6 @@ public class Task {
         this.status = status;
     }
 
-    // Геттеры и сеттеры
     public String getTitle() {
         return title;
     }
@@ -54,16 +52,15 @@ public class Task {
 
     @Override
     public boolean equals(Object obj) {
-        if (this == obj) return true; // Сравнение ссылок
-        if (!(obj instanceof Task)) return false; // Проверка типа
-
-        Task other = (Task) obj; // Приведение типа
-        return this.id == other.id; // Сравнение идентификаторов
+        if (this == obj) return true;
+        if (!(obj instanceof Task)) return false;
+        Task other = (Task) obj;
+        return this.id == other.id;
     }
 
     @Override
     public int hashCode() {
-        return Integer.hashCode(id); // Возврат хэш-кода для идентификатора
+        return Integer.hashCode(id);
     }
 
     @Override
@@ -75,5 +72,4 @@ public class Task {
                 ", status=" + status +
                 '}';
     }
-
 }

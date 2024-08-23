@@ -1,17 +1,15 @@
 public class Subtask extends Task {
-    private final int parentTaskID; // Идентификатор родительской задачи
 
-    // Конструктор с названием и описанием
+    private final int parentTaskID;
+
     public Subtask(String title, String description, TaskStatus status, int parentTaskID) {
         super(title, description, status);
         this.parentTaskID = parentTaskID;
     }
 
-    // Конструктор с ID, названием и описанием
     public Subtask(String title, String description, TaskStatus status, int id, int parentTaskID) {
         super(title, description, status, id);
         this.parentTaskID = parentTaskID;
-
     }
     public int getParentTaskID() {
         return parentTaskID;
