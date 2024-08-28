@@ -15,7 +15,7 @@ public class Subtask extends Task {
         return parentTaskID;
     }
 
-    public void setParentTaskID(Integer ParentTaskID) {
+    public void setParentTaskID(int parentTaskID) {
     }
 
     @Override
