@@ -1,9 +1,9 @@
+import java.util.List;
+
 public class Main {
 
     public static void main(String[] args) {
 
-        HistoryManager historyManager = new InMemoryHistoryManager();
-        // TaskManager taskManager = new InMemoryTaskManager(historyManager);
         TaskManager taskManager = Managers.getDefault();
 
         Task task1 = new Task("Переезд", "Жить в другой город", TaskStatus.NEW);
@@ -19,7 +19,6 @@ public class Main {
         System.out.println("Статус эпика: " + epic1.getStatus());
         System.out.println("Статус подзадачи: " + subtask1.getStatus());
 
-
         taskManager.createTask(task1);
         taskManager.createTask(task2);
 
@@ -29,7 +28,6 @@ public class Main {
         taskManager.createSubtask(subtask1);
         taskManager.createSubtask(subtask2);
 
-
         System.out.println("Статус задачи: " + task1.getStatus());
         System.out.println("Статус подзадачи: " + subtask1.getStatus());
         System.out.println("Статус эпика: " + epic1.getStatus());
@@ -37,6 +35,16 @@ public class Main {
         System.out.println("Задачи: " + taskManager.getAllTasks());
         System.out.println("Эпики: " + taskManager.getAllEpics());
         System.out.println("Подзадачи: " + taskManager.getAllSubtasks());
+
+        taskManager.getTaskById(2);
+        taskManager.getEpicById(1);
+        taskManager.getSubtaskById(4);
+        List<Task> history = taskManager.getHistory();
+
+        System.out.println("История просмотренных задач, эпик и подзадач:");
+        for (Task task : history) {
+            System.out.println(task);
+        }
 
         System.out.println("Подзадачи ID 3: " + taskManager.getSubtaskById(3));
         System.out.println("Подзадачи ID 4: " + taskManager.getSubtaskById(4));

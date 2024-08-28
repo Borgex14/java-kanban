@@ -1,4 +1,4 @@
-import java.util.ArrayList;
+import java.util.List;
 import java.util.Collection;
 
 public interface TaskManager {
@@ -40,5 +40,7 @@ public interface TaskManager {
 
     void deleteSubtaskById(int id);
 
-    ArrayList<Subtask> getSubtasksOfEpic(int Id);
+    List<Subtask> getSubtasksOfEpic(int Id);
+
+    List<Task> getHistory();
 }
