@@ -1,4 +1,11 @@
 import java.util.List;
+import manager.Managers;
+import manager.TaskManager;
+import task.Epic;
+import task.Subtask;
+import task.Task;
+import task.TaskStatus;
+
 
 public class Main {
 
@@ -67,14 +74,22 @@ public class Main {
         subtask2.setStatus(TaskStatus.DONE);
         System.out.println("Статус подзадачи обновлена: " + subtask2.getStatus());
 
-        epic1.updateStatus();
-        epic2.updateStatus();
+        epic1.updateEpicStatus();
+        epic2.updateEpicStatus();
         System.out.println("Эпики: " + taskManager.getAllEpics());
+
+        taskManager.updateSubtask(subtask1);
+        subtask1.setId(3);
+        subtask1.setTitle("Планировать новую дату и новое время");
+        subtask1.setDescription("Перезаписать всё");
+        subtask1.setStatus(TaskStatus.IN_PROGRESS);
+        subtask1.setParentTaskID(1);
+        epic1.updateEpicStatus();
 
         taskManager.updateEpic(epic1);
         epic1.setTitle("Выполнять работу по полам");
         epic1.setDescription("Выполнить с самогой легкой до самой трудной");
-        System.out.println("Эпики: " + taskManager.getAllEpics());
+        System.out.println("Эпики: " + taskManager.getEpicById(1));
 
         taskManager.deleteEpicById(1);
         System.out.println("Эпики: " + taskManager.getAllEpics());

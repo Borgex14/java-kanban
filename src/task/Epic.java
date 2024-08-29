@@ -1,3 +1,5 @@
+package task;
+
 import java.util.ArrayList;
 
 
@@ -23,7 +25,7 @@ public class Epic extends Task {
         updateStatus();
     }
 
-    protected void updateStatus() {
+    private void updateStatus() {
         if (subtasks.isEmpty()) {
             setStatus(TaskStatus.NEW);
         } else {
@@ -47,17 +49,23 @@ public class Epic extends Task {
         }
     }
 
+    public void updateEpicStatus() {
+        updateStatus();
+    }
+
     public void removeSubtask(Subtask subtask) {
         subtasks.remove(subtask);
+        updateStatus();
     }
 
     public void clearSubtasks() {
         subtasks.clear();
+        updateStatus();
     }
 
     @Override
     public String toString() {
-        return "Epic{" +
+        return "task.Epic{" +
                 "title='" + getTitle() + '\'' +
                 ", description='" + getDescription() + '\'' +
                 ", id=" + getId() +

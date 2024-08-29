@@ -1,5 +1,9 @@
+package manager;
+
 import java.util.ArrayList;
 import java.util.List;
+import task.Task;
+
 
 public class InMemoryHistoryManager implements HistoryManager {
 
@@ -9,12 +13,10 @@ public class InMemoryHistoryManager implements HistoryManager {
 
     @Override
     public void add(Task task) {
-        if (!history.contains(task)) {
-            if (history.size() >= MAX_HISTORY_SIZE) {
-                history.remove(0);
-            }
-            history.add(task);
+        if (history.size() >= MAX_HISTORY_SIZE) {
+            history.remove(0);
         }
+            history.add(task);
     }
 
     @Override

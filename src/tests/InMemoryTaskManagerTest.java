@@ -1,6 +1,14 @@
+package tests;
+
+import manager.TaskManager;
+import manager.Managers;
+import task.TaskStatus;
+
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import task.Task;
+
 
 class InMemoryTaskManagerTest {
 
@@ -21,7 +29,6 @@ class InMemoryTaskManagerTest {
         Assertions.assertNotNull(actual);
         Assertions.assertNotNull(actual.getId());
         Assertions.assertEquals(expeectedTask, actual);
-
     }
 
     @Test

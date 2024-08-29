@@ -1,3 +1,5 @@
+package task;
+
 public class Subtask extends Task {
 
     private final int parentTaskID;
@@ -20,7 +22,7 @@ public class Subtask extends Task {
 
     @Override
     public String toString() {
-        return "Subtask{" +
+        return "task.Subtask{" +
                 "title='" + getTitle() + '\'' +
                 ", description='" + getDescription() + '\'' +
                 ", id=" + getId() +

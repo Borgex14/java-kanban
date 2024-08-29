@@ -1,3 +1,9 @@
+package manager;
+
+import task.Task;
+import task.Subtask;
+import task.Epic;
+
 import java.util.List;
 import java.util.Map;
 import java.util.HashMap;
@@ -5,10 +11,11 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Objects;
 
+
 public class InMemoryTaskManager implements TaskManager {
     private final Map<Integer, Task> tasks = new HashMap<>();
-    private final HashMap<Integer, Epic> epics = new HashMap<>();
-    private final HashMap<Integer, Subtask> subtasks = new HashMap<>();
+    private final Map<Integer, Epic> epics = new HashMap<>();
+    private final Map<Integer, Subtask> subtasks = new HashMap<>();
     private final HistoryManager historyManager;
 
     public InMemoryTaskManager(HistoryManager historyManager) {
@@ -44,7 +51,6 @@ public class InMemoryTaskManager implements TaskManager {
     public void deleteSubtasks() {
         for (Epic epic : epics.values()) {
             epic.clearSubtasks();
-            epic.updateStatus();
         }
         subtasks.clear();
     }
@@ -139,7 +145,7 @@ public class InMemoryTaskManager implements TaskManager {
                 subtasks.put(subtask.getId(), subtask);
                 Epic epic = epics.get(subtask.getParentTaskID());
                 if (epic != null) {
-                    epic.updateStatus();
+                    epic.updateEpicStatus();
                 }
             } else {
                 System.out.println("ID не одинаковый. Невозможно обновить подзадачу.");
@@ -176,7 +182,6 @@ public class InMemoryTaskManager implements TaskManager {
             Epic epic = epics.get(subtask.getParentTaskID());
             if (epic != null) {
                 epic.removeSubtask(subtask);
-                epic.updateStatus();
             }
             System.out.println("Подзадача с ID " + id + " была успешно удалена.");
         } else {
