@@ -1,5 +1,7 @@
 package manager;
 
+import java.util.LinkedHashMap;
+import java.util.Map;
 import java.util.ArrayList;
 import java.util.List;
 import task.Task;
@@ -7,20 +9,16 @@ import task.Task;
 
 public class InMemoryHistoryManager implements HistoryManager {
 
-    private static final int MAX_HISTORY_SIZE = 10;
-
-    private final List<Task> history = new ArrayList<>();
+    private final Map<Integer, Task> history = new LinkedHashMap<>();
 
     @Override
     public void add(Task task) {
-        if (history.size() >= MAX_HISTORY_SIZE) {
-            history.remove(0);
-        }
-            history.add(task);
+        history.remove(task.getId());
+        history.put(task.getId(), task);
     }
 
     @Override
     public List<Task> getHistory() {
-        return new ArrayList<>(history);
+        return new ArrayList<>(history.values());
     }
 }
