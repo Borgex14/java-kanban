@@ -170,6 +170,7 @@ public class InMemoryTaskManager implements TaskManager {
                 subtasks.remove(subtask);
             }
             epics.remove(id);
+            historyManager.remove(id);
             System.out.println("Эпик с ID " + id + " и их подзадачи были удалены.");
         } else {
             System.out.println("Эпик с ID " + id + " не существует. Удаление невозможно.");
@@ -179,6 +180,7 @@ public class InMemoryTaskManager implements TaskManager {
     @Override
     public void deleteSubtaskById(int id) {
         Subtask subtask = subtasks.remove(id);
+        historyManager.remove(id);
         if (subtask != null) {
             Epic epic = epics.get(subtask.getParentTaskID());
             if (epic != null) {

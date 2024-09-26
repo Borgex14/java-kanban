@@ -45,8 +45,19 @@ public class Main {
 
         taskManager.getTaskById(2);
         taskManager.getEpicById(1);
+        taskManager.getEpicById(1);
         taskManager.getSubtaskById(4);
+        taskManager.getSubtaskById(4);
+        taskManager.getTaskById(2);
         List<Task> history = taskManager.getHistory();
+
+        System.out.println("История просмотренных задач, эпик и подзадач:");
+        for (Task task : history) {
+            System.out.println(task);
+        }
+        taskManager.deleteTaskById(2);
+        taskManager.deleteEpicById(1);
+        taskManager.deleteSubtaskById(4);
 
         System.out.println("История просмотренных задач, эпик и подзадач:");
         for (Task task : history) {
