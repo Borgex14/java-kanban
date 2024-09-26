@@ -18,6 +18,12 @@ public class InMemoryHistoryManager implements HistoryManager {
     }
 
     @Override
+    public void remove(int id) {
+        // Удаляем задачу из истории по ID
+        history.remove(id);
+    }
+
+    @Override
     public List<Task> getHistory() {
         return new ArrayList<>(history.values());
     }
