@@ -14,18 +14,18 @@ public class InMemoryHistoryManagerTest {
     private InMemoryHistoryManager historyManager;
 
     @BeforeEach
-    public void setUp() {
+    void BeforeEach() {
         historyManager = new InMemoryHistoryManager();
     }
 
     @Test
-    public void testAddTask() {
-        Task task1 = new Task("задача 1", "Выполнить задачу 1", TaskStatus.NEW);
+    void testAddTask() {
+        Task addedTask = new Task("задача 1", "Выполнить задачу 1", TaskStatus.NEW);
 
-        historyManager.add(task1);
+        historyManager.add(addedTask);
 
         List<Task> history = historyManager.getHistory();
 
-        Assertions.assertEquals(task1, history.get(0));
+        Assertions.assertEquals(addedTask, history.get(0));
     }
 }
