@@ -1,4 +1,4 @@
-package tests;
+package test;
 
 import manager.TaskManager;
 import manager.Managers;
@@ -19,7 +19,7 @@ class InMemoryTaskManagerTest {
     }
 
     @Test
-    void addNewTask__ShouldSaveTask() {  // Исправляется опечатка в "Task"
+    void addNewTask__ShouldSaveTask() {
         Task task = new Task("Выполнить Задачу", "Выполнить по этапам", TaskStatus.NEW);
         Task expectedTask = new Task("Выполнить Задачу", "Выполнить по этапам", TaskStatus.NEW, 1); // Исправлено на expectedTask
 
