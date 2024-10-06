@@ -39,7 +39,6 @@ public class InMemoryHistoryManager implements HistoryManager {
         } else {
             tail.next = newNode;
             newNode.prev = tail;
-            tail = newNode;
         }
         tail = newNode;
     }
@@ -74,8 +73,6 @@ public class InMemoryHistoryManager implements HistoryManager {
         } else {
             tail = node.prev;
         }
-        node.prev = null;
-        node.next = null;
         if (head != null) {
             head.prev = null;
         }
