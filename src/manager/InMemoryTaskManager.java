@@ -162,7 +162,7 @@ public class InMemoryTaskManager implements TaskManager {
     public void updateEpic(Epic epic) {
         if (epics.containsKey(epic.getId())) {
             Epic existingEpic = epics.get(epic.getId());
-            existingEpic.setTitle(epic.getTitle());
+            existingEpic.setName(epic.getName());
             existingEpic.setDescription(epic.getDescription());
         } else {
             System.out.println("Эпик с ID " + epic.getId() + " не существует.");
@@ -177,7 +177,7 @@ public class InMemoryTaskManager implements TaskManager {
                 subtasks.put(subtask.getId(), subtask);
                 Epic epic = epics.get(subtask.getParentTaskID());
                 if (epic != null) {
-                    epic.updateEpicStatus();
+                    epic.updateEpicState();
                 }
             } else {
                 System.out.println("ID не одинаковый. Невозможно обновить подзадачу.");

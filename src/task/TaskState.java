@@ -1,7 +1,7 @@
 package task;
 
 
-public enum TaskStatus {
+public enum TaskState {
     NEW,
     IN_PROGRESS,
     DONE;

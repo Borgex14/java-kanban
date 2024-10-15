@@ -2,7 +2,7 @@
 
 import manager.TaskManager;
 import manager.Managers;
-import task.TaskStatus;
+import task.TaskState;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -20,8 +20,8 @@ class InMemoryTaskManagerTest {
 
     @Test
     void addNewTask__ShouldSaveTask() {
-        Task task = new Task("Выполнить Задачу", "Выполнить по этапам", TaskStatus.NEW);
-        Task expectedTask = new Task("Выполнить Задачу", "Выполнить по этапам", TaskStatus.NEW, 1); // Исправлено на expectedTask
+        Task task = new Task("Выполнить Задачу", "Выполнить по этапам", TaskState.NEW);
+        Task expectedTask = new Task("Выполнить Задачу", "Выполнить по этапам", TaskState.NEW, 1); // Исправлено на expectedTask
 
         Task actual = taskManager.createTask(task);
 
@@ -32,11 +32,11 @@ class InMemoryTaskManagerTest {
 
     @Test
     void updateTask__shouldUpdateID() {
-        Task task = new Task("Выполнить работу", "Выполнить по этапам работы", TaskStatus.NEW);
+        Task task = new Task("Выполнить работу", "Выполнить по этапам работы", TaskState.NEW);
         Task addedTask = taskManager.createTask(task); // Изменено имя переменной
-        Task updatedTask = new Task("Выполнить работу завтра", "Выполнить по этапам работы", TaskStatus.NEW, addedTask.getId()); // Изменено имя переменной
+        Task updatedTask = new Task("Выполнить работу завтра", "Выполнить по этапам работы", TaskState.NEW, addedTask.getId()); // Изменено имя переменной
 
-        Task expectedTask = new Task("Выполнить работу завтра", "Выполнить по этапам работы", TaskStatus.NEW, addedTask.getId());
+        Task expectedTask = new Task("Выполнить работу завтра", "Выполнить по этапам работы", TaskState.NEW, addedTask.getId());
 
         Task actualUpdateTask = taskManager.updateTask(updatedTask); // Исправлено название переменной
 
@@ -45,14 +45,14 @@ class InMemoryTaskManagerTest {
 
     @Test
     void withoutFieldsChangesOfTask() {
-        Task task = new Task("Выполнить Задачу", "Выполнить по этапам", TaskStatus.NEW);
-        Task expectedTask = new Task("Выполнить Задачу", "Выполнить по этапам", TaskStatus.NEW, 1);
+        Task task = new Task("Выполнить Задачу", "Выполнить по этапам", TaskState.NEW);
+        Task expectedTask = new Task("Выполнить Задачу", "Выполнить по этапам", TaskState.NEW, 1);
 
         Task actualTask = taskManager.createTask(task);
 
-        Assertions.assertEquals(expectedTask.getTitle(), actualTask.getTitle());
+        Assertions.assertEquals(expectedTask.getName(), actualTask.getName());
         Assertions.assertEquals(expectedTask.getDescription(), actualTask.getDescription());
-        Assertions.assertEquals(expectedTask.getStatus(), actualTask.getStatus());
+        Assertions.assertEquals(expectedTask.getState(), actualTask.getState());
     }
 }
 
