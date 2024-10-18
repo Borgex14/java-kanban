@@ -6,7 +6,6 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.util.List;
-import manager.HistoryManager;
 import manager.InMemoryTaskManager;
 import task.Task;
 import task.Subtask;
@@ -22,7 +21,9 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
 
     public static FileBackedTaskManager loadFromFile(File file) throws ManagerSaveException {
         FileBackedTaskManager taskManager = new FileBackedTaskManager(file);
-        try { List<String> lines = Files.readAllLines(file.toPath());
+        try
+        {
+            List<String> lines = Files.readAllLines(file.toPath());
             for (int i = 1; i < lines.size(); i++) {
                 String line = lines.get(i);
                 if (!line.trim().isEmpty()) {
@@ -40,7 +41,8 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
             throw new ManagerSaveException("Ошибка при загрузке данных из файла: " + file.getName(), e);
         } catch (Exception e) {
             throw new ManagerSaveException("Ошибка при обработке строки в файле: " + file.getName(), e);
-        } return taskManager;
+        }
+        return taskManager;
     }
 
     @Override
