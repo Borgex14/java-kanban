@@ -1,9 +1,21 @@
 
 
+import manager.InMemoryHistoryManager;
 import manager.TaskManager;
 import manager.Managers;
+import savedfiles.FileBackedTaskManager;
+import savedfiles.ManagerSaveException;
 import savedfiles.TaskType;
 import task.TaskStatus;
+
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.util.List;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -54,6 +66,18 @@ class InMemoryTaskManagerTest {
         Assertions.assertEquals(expectedTask.getDescription(), actualTask.getDescription());
         Assertions.assertEquals(expectedTask.getStatus(), actualTask.getStatus());
     }
+
+    @Test
+    void saveAndLoadEmptyFile() throws IOException, ManagerSaveException {
+        File file = File.createTempFile("empty_tasks", ".csv");
+        FileBackedTaskManager taskManager = new FileBackedTaskManager(file);
+        taskManager.save();
+        FileBackedTaskManager loadedManager = FileBackedTaskManager.loadFromFile(file);
+        Assertions.assertTrue(loadedManager.getAllTasks().isEmpty(), "Загруженные задачи не должны быть пустыми");
+        file.delete();
+    }
+
+
 }
 
 

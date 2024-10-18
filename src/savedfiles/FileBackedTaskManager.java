@@ -14,27 +14,25 @@ import task.Epic;
 
 
 public class FileBackedTaskManager extends InMemoryTaskManager {
-    private final File file;
+    protected File file;
 
-    public FileBackedTaskManager(HistoryManager historyManager, File file) {
-        super(historyManager);
+    public FileBackedTaskManager(File file) {
         this.file = file;
-        loadFromFile();
     }
 
-    private void loadFromFile() throws ManagerSaveException {
-        try {
-            List<String> lines = Files.readAllLines(file.toPath());
+    public static FileBackedTaskManager loadFromFile(File file) throws ManagerSaveException {
+        FileBackedTaskManager taskManager = new FileBackedTaskManager(file);
+        try { List<String> lines = Files.readAllLines(file.toPath());
             for (int i = 1; i < lines.size(); i++) {
                 String line = lines.get(i);
                 if (!line.trim().isEmpty()) {
                     Task task = Task.fromString(line);
                     if (task instanceof Epic) {
-                        createEpic((Epic) task);
+                        taskManager.createEpic((Epic) task);
                     } else if (task instanceof Subtask) {
-                        createSubtask((Subtask) task);
+                        taskManager.createSubtask((Subtask) task);
                     } else {
-                        createTask(task);
+                        taskManager.createTask(task);
                     }
                 }
             }
@@ -42,7 +40,7 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
             throw new ManagerSaveException("Ошибка при загрузке данных из файла: " + file.getName(), e);
         } catch (Exception e) {
             throw new ManagerSaveException("Ошибка при обработке строки в файле: " + file.getName(), e);
-        }
+        } return taskManager;
     }
 
     @Override
