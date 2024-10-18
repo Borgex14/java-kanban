@@ -177,7 +177,7 @@ public class InMemoryTaskManager implements TaskManager {
                 subtasks.put(subtask.getId(), subtask);
                 Epic epic = epics.get(subtask.getParentTaskID());
                 if (epic != null) {
-                    epic.updateEpicState();
+                    epic.updateEpicStatus();
                 }
             } else {
                 System.out.println("ID не одинаковый. Невозможно обновить подзадачу.");

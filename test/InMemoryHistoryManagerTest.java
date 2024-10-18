@@ -4,7 +4,7 @@ import org.junit.jupiter.api.Assertions;
 import task.Task;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import task.TaskState;
+import task.TaskStatus;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class InMemoryHistoryManagerTest {
@@ -18,7 +18,7 @@ class InMemoryHistoryManagerTest {
 
     @Test
     public void testAddSameTask() {
-        Task task1 = new Task("задача 1", "Выполнить задачу 1", TaskState.NEW);
+        Task task1 = new Task("задача 1",TaskStatus.NEW, "Выполнить задачу 1");
         historyManager.add(task1);
         historyManager.add(task1);
         List<Task> history = historyManager.getHistory();
@@ -28,7 +28,7 @@ class InMemoryHistoryManagerTest {
 
     @Test
     public void testRemoveTask() {
-        Task task1 = new Task("Переезд", "Жить в другой город", TaskState.NEW);
+        Task task1 = new Task("Переезд",TaskStatus.NEW, "Жить в другой город");
 
         historyManager.add(task1);
 

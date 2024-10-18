@@ -6,21 +6,28 @@ public class Task {
     private String name;
     private String description;
     private int id;
-    private TaskState state;
+    private TaskStatus status;
     private TaskType type;
 
-    public Task(String name, TaskState state, String description) {
+    public Task(String name, TaskStatus status, String description) {
         this.name = name;
         this.description = description;
-        this.state = state;
+        this.status = status;
     }
 
-    public Task(int id, TaskType type, String name, TaskState state, String description) {
+    public Task(int id, TaskType type, String name, TaskStatus status, String description) {
         this.name = name;
         this.description = description;
         this.id = id;
-        this.state = state;
+        this.status = status;
         this.type = type;
+    }
+
+    public Task(String name, String description, int id, TaskStatus status) {
+        this.name = name;
+        this.description = description;
+        this.id = id;
+        this.status = status;
     }
 
     public String getName() {
@@ -47,12 +54,12 @@ public class Task {
         this.id = id;
     }
 
-    public TaskState getState() {
-        return state;
+    public TaskStatus getStatus() {
+        return status;
     }
 
-    public void seState(TaskState state) {
-        this.state = state;
+    public void setStatus(TaskStatus Status) {
+        this.status = Status;
     }
     
     public TaskType getType() {
@@ -74,24 +81,27 @@ public class Task {
 
     @Override
     public String toString() {
-        return String.format("%d,%s,%s,%s,%s", id, type, name, state, description);
+        return String.format("%d,%s,%s,%s,%s", id, type.name(), name, status.name(), description);
     }
 
     public static Task fromString(String value) {
         String[] fields = value.split(",");
+        if (fields.length < 5) {
+            throw new IllegalArgumentException("Неправильный формат строки для задачи: " + value);
+        }
         int id = Integer.parseInt(fields[0]);
         TaskType type = TaskType.valueOf(fields[1]);
         String name = fields[2];
-        TaskState state = TaskState.valueOf(fields[3]);
+        TaskStatus status = TaskStatus.valueOf(fields[3]);
         String description = fields[4];
-        if (fields.length > 5) {
+        if (fields.length > 5 && type == TaskType.SUBTASK) {
             int parentId = Integer.parseInt(fields[5]);
-            return new Subtask(id,type, name, state, description, parentId);
+            return new Subtask(id,type, name, status, description, parentId);
         } else {
             if (type == TaskType.EPIC) {
-                return new Epic(id, type, name, state, description);
+                return new Epic(id, type, name, status, description);
             } else {
-                return new Task(id, type, name, state, description);
+                return new Task(id, type, name, status, description);
             }
         }
     }
