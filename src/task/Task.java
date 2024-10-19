@@ -58,12 +58,12 @@ public class Task {
         return status;
     }
 
-    public void setStatus(TaskStatus Status) {
-        this.status = Status;
+    public void setStatus(TaskStatus status) {
+        this.status = status;
     }
-    
+
     public TaskType getType() {
-    return type; 
+        return type;
     }
 
     @Override

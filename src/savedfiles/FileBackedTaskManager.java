@@ -21,8 +21,7 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
 
     public static FileBackedTaskManager loadFromFile(File file) throws ManagerSaveException {
         FileBackedTaskManager taskManager = new FileBackedTaskManager(file);
-        try
-        {
+        try {
             List<String> lines = Files.readAllLines(file.toPath());
             for (int i = 1; i < lines.size(); i++) {
                 String line = lines.get(i);
