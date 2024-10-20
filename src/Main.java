@@ -1,6 +1,7 @@
 import java.util.List;
 import manager.Managers;
 import manager.TaskManager;
+import savedfiles.TaskType;
 import task.Epic;
 import task.Subtask;
 import task.Task;
@@ -13,8 +14,8 @@ public class Main {
 
         TaskManager taskManager = Managers.getDefault();
 
-        Task task1 = new Task("Переезд", "Жить в другой город", TaskStatus.NEW);
-        Task task2 = new Task("Выполнять работу", "Опеределить все задачи работы", TaskStatus.NEW);
+        Task task1 = new Task("Переезд",  TaskStatus.NEW, "Жить в другой город");
+        Task task2 = new Task(1, TaskType.TASK, "Выполнять работу", TaskStatus.NEW, "Опеределить все задачи работы");
         Epic epic1 = new Epic("Большой переезд", "Переезд из одного города");
         epic1.setId(1);
         Epic epic2 = new Epic("Выполнить большую работу", "Разделить задачи по этапу");
@@ -25,6 +26,11 @@ public class Main {
         System.out.println("Статус задачи: " + task1.getStatus());
         System.out.println("Статус эпика: " + epic1.getStatus());
         System.out.println("Статус подзадачи: " + subtask1.getStatus());
+
+        System.out.println("Тип задачи: " + task1.getType());
+        System.out.println("Тип эпика: " + epic1.getType());
+        System.out.println("Тип подзадачи: " + subtask1.getType());
+
 
         taskManager.createTask(task1);
         taskManager.createTask(task2);
@@ -38,6 +44,10 @@ public class Main {
         System.out.println("Статус задачи: " + task1.getStatus());
         System.out.println("Статус подзадачи: " + subtask1.getStatus());
         System.out.println("Статус эпика: " + epic1.getStatus());
+
+        System.out.println("Тип задачи: " + task1.getType());
+        System.out.println("Тип эпика: " + epic1.getType());
+        System.out.println("Тип подзадачи: " + subtask1.getType());
 
         System.out.println("Задачи: " + taskManager.getAllTasks());
         System.out.println("Эпики: " + taskManager.getAllEpics());
@@ -98,14 +108,14 @@ public class Main {
 
         taskManager.updateSubtask(subtask1);
         subtask1.setId(3);
-        subtask1.setTitle("Планировать новую дату и новое время");
+        subtask1.setName("Планировать новую дату и новое время");
         subtask1.setDescription("Перезаписать всё");
         subtask1.setStatus(TaskStatus.IN_PROGRESS);
         subtask1.setParentTaskID(1);
         epic1.updateEpicStatus();
 
         taskManager.updateEpic(epic1);
-        epic1.setTitle("Выполнять работу по полам");
+        epic1.setName("Выполнять работу по полам");
         epic1.setDescription("Выполнить с самогой легкой до самой трудной");
         System.out.println("Эпики: " + taskManager.getEpicById(1));
 
