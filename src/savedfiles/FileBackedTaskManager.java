@@ -23,6 +23,7 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
         FileBackedTaskManager taskManager = new FileBackedTaskManager(file);
         try {
             List<String> lines = Files.readAllLines(file.toPath());
+            int maxId = 0;
             for (int i = 1; i < lines.size(); i++) {
                 String line = lines.get(i);
                 if (!line.trim().isEmpty()) {
@@ -34,8 +35,13 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
                     } else {
                         taskManager.createTask(task);
                     }
+
+                    if (task.getId() > maxId) {
+                        maxId = task.getId();
+                    }
                 }
             }
+            taskManager.setNextId(maxId + 1);
         } catch (IOException e) {
             throw new ManagerSaveException("Ошибка при загрузке данных из файла: " + file.getName(), e);
         } catch (Exception e) {

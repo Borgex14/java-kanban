@@ -19,6 +19,11 @@ public class InMemoryTaskManager implements TaskManager {
 
 
     @Override
+    public void setNextId(int nextId) {
+        this.nextId = nextId;
+    }
+
+    @Override
     public Collection<Task> getAllTasks() {
         return tasks.values();
     }
