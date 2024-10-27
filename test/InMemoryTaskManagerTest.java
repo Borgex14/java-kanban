@@ -1,12 +1,20 @@
 
 
+
 import manager.TaskManager;
 import manager.Managers;
+import savedfiles.FileBackedTaskManager;
+import savedfiles.ManagerSaveException;
+import savedfiles.TaskType;
 import task.TaskStatus;
 
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+
+import java.io.File;
+import java.io.IOException;
+
+import org.junit.jupiter.api.BeforeEach;
 import task.Task;
 
 class InMemoryTaskManagerTest {
@@ -20,10 +28,9 @@ class InMemoryTaskManagerTest {
 
     @Test
     void addNewTask__ShouldSaveTask() {
-        Task task = new Task("Выполнить Задачу", "Выполнить по этапам", TaskStatus.NEW);
-        Task expectedTask = new Task("Выполнить Задачу", "Выполнить по этапам", TaskStatus.NEW, 1); // Исправлено на expectedTask
-
+        Task task = new Task("Выполнить Задачу",TaskStatus.NEW, "Выполнить по этапам");
         Task actual = taskManager.createTask(task);
+        Task expectedTask = new Task("Выполнить Задачу", "Выполнить по этапам", actual.getId(),TaskStatus.NEW);
 
         Assertions.assertNotNull(actual);
         Assertions.assertNotNull(actual.getId());
@@ -32,27 +39,37 @@ class InMemoryTaskManagerTest {
 
     @Test
     void updateTask__shouldUpdateID() {
-        Task task = new Task("Выполнить работу", "Выполнить по этапам работы", TaskStatus.NEW);
-        Task addedTask = taskManager.createTask(task); // Изменено имя переменной
-        Task updatedTask = new Task("Выполнить работу завтра", "Выполнить по этапам работы", TaskStatus.NEW, addedTask.getId()); // Изменено имя переменной
+        Task task = new Task("Выполнить работу",TaskStatus.NEW, "Выполнить по этапам работы");
+        Task addedTask = taskManager.createTask(task);
+        Task updatedTask = new Task("Выполнить работу завтра","Выполнить по этапам работы", addedTask.getId(), TaskStatus.NEW);
 
-        Task expectedTask = new Task("Выполнить работу завтра", "Выполнить по этапам работы", TaskStatus.NEW, addedTask.getId());
+        Task expectedTask = new Task("Выполнить работу завтра","Выполнить по этапам работы", addedTask.getId(), TaskStatus.NEW);
 
-        Task actualUpdateTask = taskManager.updateTask(updatedTask); // Исправлено название переменной
+        Task actualUpdateTask = taskManager.updateTask(updatedTask);
 
         Assertions.assertEquals(expectedTask, actualUpdateTask);
     }
 
     @Test
     void withoutFieldsChangesOfTask() {
-        Task task = new Task("Выполнить Задачу", "Выполнить по этапам", TaskStatus.NEW);
-        Task expectedTask = new Task("Выполнить Задачу", "Выполнить по этапам", TaskStatus.NEW, 1);
+        Task task = new Task("Выполнить Задачу",TaskStatus.NEW, "Выполнить по этапам");
+        Task expectedTask = new Task(1, TaskType.TASK, "Выполнить Задачу", TaskStatus.NEW, "Выполнить по этапам");
 
         Task actualTask = taskManager.createTask(task);
 
-        Assertions.assertEquals(expectedTask.getTitle(), actualTask.getTitle());
+        Assertions.assertEquals(expectedTask.getName(), actualTask.getName());
         Assertions.assertEquals(expectedTask.getDescription(), actualTask.getDescription());
         Assertions.assertEquals(expectedTask.getStatus(), actualTask.getStatus());
+    }
+
+    @Test
+    void saveAndLoadEmptyFile() throws IOException, ManagerSaveException {
+        File file = File.createTempFile("empty_tasks", ".csv");
+        FileBackedTaskManager taskManager = new FileBackedTaskManager(file);
+        taskManager.save();
+        FileBackedTaskManager loadedManager = FileBackedTaskManager.loadFromFile(file);
+        Assertions.assertTrue(loadedManager.getAllTasks().isEmpty(), "Загруженные задачи не должны быть пустыми");
+        file.delete();
     }
 }
 

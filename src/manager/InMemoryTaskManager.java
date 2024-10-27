@@ -11,14 +11,16 @@ import java.util.Collection;
 import java.util.Objects;
 
 public class InMemoryTaskManager implements TaskManager {
-    private final Map<Integer, Task> tasks = new HashMap<>();
-    private final Map<Integer, Epic> epics = new HashMap<>();
-    private final Map<Integer, Subtask> subtasks = new HashMap<>();
-    private final HistoryManager historyManager;
-    private int nextId = 1;
+    protected final Map<Integer, Task> tasks = new HashMap<>();
+    protected final Map<Integer, Epic> epics = new HashMap<>();
+    protected final Map<Integer, Subtask> subtasks = new HashMap<>();
+    protected final HistoryManager historyManager = Managers.getDefaultHistoryManager();
+    protected int nextId = 1;
 
-    public InMemoryTaskManager(HistoryManager historyManager) {
-        this.historyManager = historyManager;
+
+    @Override
+    public void setNextId(int nextId) {
+        this.nextId = nextId;
     }
 
     @Override
@@ -162,7 +164,7 @@ public class InMemoryTaskManager implements TaskManager {
     public void updateEpic(Epic epic) {
         if (epics.containsKey(epic.getId())) {
             Epic existingEpic = epics.get(epic.getId());
-            existingEpic.setTitle(epic.getTitle());
+            existingEpic.setName(epic.getName());
             existingEpic.setDescription(epic.getDescription());
         } else {
             System.out.println("Эпик с ID " + epic.getId() + " не существует.");

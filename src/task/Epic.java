@@ -1,18 +1,24 @@
 package task;
 
 import java.util.ArrayList;
+import savedfiles.TaskType;
 
 
 public class Epic extends Task {
     private final ArrayList<Subtask> subtasks;
+    private String name;
+    private String description;
+    private int id;
+    private TaskStatus status;
+    private TaskType type;
 
-    public Epic(String title, String description) {
-        super(title, description, TaskStatus.NEW);
+    public Epic(String name, String description) {
+        super(name, TaskStatus.NEW, description);
         this.subtasks = new ArrayList<>();
     }
 
-    public Epic(String title, String description, int id) {
-        super(title, description, TaskStatus.NEW, id);
+    public Epic(int id, TaskType type, String name, TaskStatus status, String description) {
+        super(id, type, name, TaskStatus.NEW, description);
         this.subtasks = new ArrayList<>();
     }
 
@@ -49,6 +55,9 @@ public class Epic extends Task {
         }
     }
 
+    public void setStatus(TaskStatus status) {
+    }
+
     public void updateEpicStatus() {
         updateStatus();
     }
@@ -65,13 +74,18 @@ public class Epic extends Task {
 
     @Override
     public String toString() {
-        return "task.Epic{" +
-                "title='" + getTitle() + '\'' +
-                ", description='" + getDescription() + '\'' +
-                ", id=" + getId() +
-                ", status=" + getStatus() +
-                ", subtasks=" + getSubtasks() +
-                '}';
+        return String.format("%d,%s,%s,%s,%s", id, type, name, status, description);
+    }
+
+    public static Epic fromString(String value) {
+        String[] fields = value.split(",");
+        System.out.println(fields.length);
+        int id = Integer.parseInt(fields[0]);
+        TaskType type = TaskType.valueOf(fields[1]);
+        String name = fields[2];
+        TaskStatus status = TaskStatus.valueOf(fields[3]);
+        String description = fields[4];
+        return new Epic(id, type, name, status, description);
     }
 }
 
