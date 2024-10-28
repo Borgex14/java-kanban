@@ -137,10 +137,11 @@ public class Task {
         LocalDateTime startTime = LocalDateTime.parse(fields[6]);
         if (fields.length > 7 && type == TaskType.SUBTASK) {
             int parentId = Integer.parseInt(fields[7]);
-            return new Subtask(id,type, name, status, description, parentId);
+            return new Subtask(id, type, name, status, description, parentId, duration, startTime);
         } else {
             if (type == TaskType.EPIC) {
-                return new Epic(id, type, name, status, description);
+                LocalDateTime endTime = LocalDateTime.parse(fields[7]);
+                return new Epic(id, type, name, status, description, duration, startTime, endTime);
             } else {
                 return new Task(id, type, name, status, description, duration, startTime);
             }
