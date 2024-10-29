@@ -7,6 +7,8 @@ import task.Epic;
 import task.Subtask;
 
 public interface TaskManager {
+    Collection<Task> getPrioritizedTasks();
+
     Collection<Task> getAllTasks();
 
     Collection<Epic> getAllEpics();

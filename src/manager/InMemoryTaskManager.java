@@ -9,6 +9,7 @@ import java.util.HashMap;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Objects;
+import java.util.TreeSet;
 
 public class InMemoryTaskManager implements TaskManager {
     protected final Map<Integer, Task> tasks = new HashMap<>();
@@ -17,6 +18,18 @@ public class InMemoryTaskManager implements TaskManager {
     protected final HistoryManager historyManager = Managers.getDefaultHistoryManager();
     protected int nextId = 1;
 
+    protected final TreeSet<Task> prioritizedTasks = new TreeSet<>((task1, task2) -> {
+        if (task1.getStartTime() == null && task2.getStartTime() == null) return 0;
+        if (task1.getStartTime() == null) return 1;
+        if (task2.getStartTime() == null) return -1;
+        return task1.getStartTime().compareTo(task2.getStartTime());
+    });
+
+
+    @Override
+    public Collection<Task> getPrioritizedTasks() {
+        return prioritizedTasks;
+    }
 
     @Override
     public void setNextId(int nextId) {
@@ -122,6 +135,7 @@ public class InMemoryTaskManager implements TaskManager {
             nextId++;
         }
         tasks.put(task.getId(), task);
+        prioritizedTasks.add(task);
         return task;
     }
 
@@ -144,6 +158,7 @@ public class InMemoryTaskManager implements TaskManager {
             }
             epic.addSubtask(subtask);
             subtasks.put(subtask.getId(), subtask);
+            prioritizedTasks.add(subtask);
         } else {
             System.out.println("Не удалось создать подзадачу, так как эпик с ID " + subtask.getParentTaskID() + " не существует.");
         }
