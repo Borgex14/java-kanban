@@ -2,9 +2,9 @@ package manager;
 
 import java.util.List;
 import java.util.Collection;
+import task.Task;
 import task.Epic;
 import task.Subtask;
-import task.Task;
 
 public interface TaskManager {
     Collection<Task> getAllTasks();
