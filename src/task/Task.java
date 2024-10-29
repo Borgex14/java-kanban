@@ -103,6 +103,19 @@ public class Task {
         return type;
     }
 
+    public boolean isOverlapping(Task other) {
+        if (this.startTime == null || other.startTime == null || this.duration == null || other.duration == null) {
+            return false;
+        }
+
+        LocalDateTime thisStart = this.startTime;
+        LocalDateTime thisEnd = this.getEndTime();
+        LocalDateTime otherStart = other.startTime;
+        LocalDateTime otherEnd = other.getEndTime();
+
+        return (thisStart.isBefore(otherEnd) && otherStart.isBefore(thisEnd));
+    }
+
     @Override
     public boolean equals(Object obj) {
         if (this == obj) return true;

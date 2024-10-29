@@ -65,6 +65,19 @@ public class Subtask extends Task {
     public void setStatus(TaskStatus status) {
     }
 
+    public boolean isOverlapping(Subtask other) {
+        if (this.startTime == null || other.startTime == null || this.duration == null || other.duration == null) {
+            return false;
+        }
+
+        LocalDateTime thisStart = this.startTime;
+        LocalDateTime thisEnd = this.getEndTime();
+        LocalDateTime otherStart = other.startTime;
+        LocalDateTime otherEnd = other.getEndTime();
+
+        return (thisStart.isBefore(otherEnd) && otherStart.isBefore(thisEnd));
+    }
+
     @Override
     public String toString() {
         return String.format("%d,%s,%s,%s,%s,%d", id, type, name, status, description, parentTaskID,
