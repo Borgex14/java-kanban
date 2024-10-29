@@ -1,10 +1,7 @@
 import manager.HistoryManager;
-import manager.InMemoryHistoryManager;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import task.Task;
-import task.TaskStatus;
-
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;

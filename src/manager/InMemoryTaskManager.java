@@ -8,7 +8,6 @@ import task.Subtask;
 import java.util.List;
 import java.util.Map;
 import java.util.HashMap;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Objects;
 import java.util.TreeSet;
@@ -27,13 +26,6 @@ public class InMemoryTaskManager implements TaskManager {
         return task1.getStartTime().compareTo(task2.getStartTime());
     });
 
-    protected final TreeSet<Epic> prioritizedEpics = new TreeSet<>((epic1, epic2) -> {
-        if (epic1.getStartTime() == null && epic2.getStartTime() == null) return 0;
-        if (epic1.getStartTime() == null) return 1;
-        if (epic2.getStartTime() == null) return -1;
-        return epic1.getStartTime().compareTo(epic2.getStartTime());
-    });
-
     protected final TreeSet<Subtask> prioritizedSubtasks = new TreeSet<>((subtask1, subtask2) -> {
         if (subtask1.getStartTime() == null && subtask2.getStartTime() == null) return 0;
         if (subtask1.getStartTime() == null) return 1;
@@ -45,11 +37,6 @@ public class InMemoryTaskManager implements TaskManager {
     @Override
     public Collection<Task> getPrioritizedTasks() {
         return prioritizedTasks;
-    }
-
-    @Override
-    public Collection<Epic> getPrioritizedEpics() {
-        return prioritizedEpics;
     }
 
     @Override
