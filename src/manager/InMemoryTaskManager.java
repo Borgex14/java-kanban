@@ -26,22 +26,9 @@ public class InMemoryTaskManager implements TaskManager {
         return task1.getStartTime().compareTo(task2.getStartTime());
     });
 
-    protected final TreeSet<Subtask> prioritizedSubtasks = new TreeSet<>((subtask1, subtask2) -> {
-        if (subtask1.getStartTime() == null && subtask2.getStartTime() == null) return 0;
-        if (subtask1.getStartTime() == null) return 1;
-        if (subtask2.getStartTime() == null) return -1;
-        return subtask1.getStartTime().compareTo(subtask2.getStartTime());
-    });
-
-
     @Override
     public Collection<Task> getPrioritizedTasks() {
         return prioritizedTasks;
-    }
-
-    @Override
-    public Collection<Subtask> getPrioritizedSubtasks() {
-        return prioritizedSubtasks;
     }
 
     @Override
@@ -67,6 +54,7 @@ public class InMemoryTaskManager implements TaskManager {
     @Override
     public void deleteTasks() {
         tasks.keySet().forEach(historyManager::remove);
+        prioritizedTasks.removeIf(task -> tasks.containsKey(task.getId()));
         tasks.clear();
     }
 
@@ -74,6 +62,7 @@ public class InMemoryTaskManager implements TaskManager {
     public void deleteEpics() {
         epics.values().forEach(epic -> {
             epic.getSubtasks().forEach(subtask -> historyManager.remove(subtask.getId()));
+            prioritizedTasks.removeIf(task -> subtasks.containsKey(task.getId()));
             historyManager.remove(epic.getId());
         });
         subtasks.clear();
@@ -85,6 +74,7 @@ public class InMemoryTaskManager implements TaskManager {
     public void deleteSubtasks() {
         epics.values().forEach(Epic::clearSubtasks);
         subtasks.keySet().forEach(historyManager::remove);
+        prioritizedTasks.removeIf(task -> subtasks.containsKey(task.getId()));
         subtasks.clear();
     }
 
@@ -99,6 +89,7 @@ public class InMemoryTaskManager implements TaskManager {
         for (Integer epicId : epics.keySet()) {
             historyManager.remove(epicId);
         }
+        prioritizedTasks.removeIf(task -> tasks.containsKey(task.getId()) || subtasks.containsKey(task.getId()));
         tasks.clear();
         subtasks.clear();
         epics.clear();
@@ -165,13 +156,13 @@ public class InMemoryTaskManager implements TaskManager {
                 nextId++;
             }
             epic.addSubtask(subtask);
-            boolean hasOverlap = getPrioritizedSubtasks().stream()
+            boolean hasOverlap = getPrioritizedTasks().stream()
                     .anyMatch(subtask::isOverlapping);
             if (hasOverlap) {
                 throw new IllegalArgumentException("Подзадача пересекается с существующей задачей");
             }
             subtasks.put(subtask.getId(), subtask);
-            prioritizedSubtasks.add(subtask);
+            prioritizedTasks.add(subtask);
         } else {
             System.out.println("Не удалось создать подзадачу, так как эпик с ID " + subtask.getParentTaskID() + " не существует.");
         }
@@ -180,6 +171,12 @@ public class InMemoryTaskManager implements TaskManager {
     @Override
     public Task updateTask(Task task) {
         if (tasks.containsKey(task.getId())) {
+            for (Task existingTask : tasks.values()) {
+                if (existingTask.getId() != task.getId() && existingTask.isOverlapping(task)) {
+                    System.out.println("Обновление задачи невозможно: новое состояние пересекается с задачей с ID " + existingTask.getId());
+                    return null;
+                }
+            }
             tasks.put(task.getId(), task);
             System.out.println("Задача успешно обновлена");
         } else {
@@ -204,6 +201,18 @@ public class InMemoryTaskManager implements TaskManager {
         if (subtasks.containsKey(subtask.getId())) {
             Subtask existingSubtask = subtasks.get(subtask.getId());
             if (existingSubtask.getParentTaskID() == (subtask.getParentTaskID())) {
+                for (Subtask existing : subtasks.values()) {
+                    if (existing.getId() != subtask.getId() && existing.isOverlapping(subtask)) {
+                        System.out.println("Обновление подзадачи невозможно: новое состояние пересекается с подзадачей с ID " + existing.getId());
+                        return;
+                    }
+                }
+                for (Task existing : tasks.values()) {
+                    if (existing.isOverlapping(subtask)) {
+                        System.out.println("Обновление подзадачи невозможно: новое состояние пересекается с задачей с ID " + existing.getId());
+                        return;
+                    }
+                }
                 subtasks.put(subtask.getId(), subtask);
                 Epic epic = epics.get(subtask.getParentTaskID());
                 if (epic != null) {
