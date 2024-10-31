@@ -171,13 +171,15 @@ public class InMemoryTaskManager implements TaskManager {
     @Override
     public Task updateTask(Task task) {
         if (tasks.containsKey(task.getId())) {
-            for (Task existingTask : tasks.values()) {
+            for (Task existingTask : prioritizedTasks) {
                 if (existingTask.getId() != task.getId() && existingTask.isOverlapping(task)) {
                     System.out.println("Обновление задачи невозможно: новое состояние пересекается с задачей с ID " + existingTask.getId());
                     return null;
                 }
             }
+            prioritizedTasks.remove(tasks.get(task.getId()));
             tasks.put(task.getId(), task);
+            prioritizedTasks.add(task);
             System.out.println("Задача успешно обновлена");
         } else {
             System.out.println("Задача с ID " + task.getId() + " не существует.");
@@ -201,15 +203,9 @@ public class InMemoryTaskManager implements TaskManager {
         if (subtasks.containsKey(subtask.getId())) {
             Subtask existingSubtask = subtasks.get(subtask.getId());
             if (existingSubtask.getParentTaskID() == (subtask.getParentTaskID())) {
-                for (Subtask existing : subtasks.values()) {
+                for (Task existing : prioritizedTasks) {
                     if (existing.getId() != subtask.getId() && existing.isOverlapping(subtask)) {
                         System.out.println("Обновление подзадачи невозможно: новое состояние пересекается с подзадачей с ID " + existing.getId());
-                        return;
-                    }
-                }
-                for (Task existing : tasks.values()) {
-                    if (existing.isOverlapping(subtask)) {
-                        System.out.println("Обновление подзадачи невозможно: новое состояние пересекается с задачей с ID " + existing.getId());
                         return;
                     }
                 }
