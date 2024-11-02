@@ -8,8 +8,8 @@ import java.nio.file.Files;
 import java.util.List;
 import manager.InMemoryTaskManager;
 import task.Task;
-import task.Subtask;
 import task.Epic;
+import task.Subtask;
 
 
 public class FileBackedTaskManager extends InMemoryTaskManager {
@@ -132,7 +132,7 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
 
     public void save() {
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(file))) {
-            writer.write("id,type,name,status,description,epic \n");
+            writer.write("id,type,name,status,description,duration,startTime,endTime,epic\\n");
             for (Task task : getAllTasks()) {
                 writer.write(task.toString() + "\n");
             }

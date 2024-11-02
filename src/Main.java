@@ -1,10 +1,13 @@
+import java.time.Duration;
+import java.time.LocalDateTime;
+import java.util.Collection;
 import java.util.List;
 import manager.Managers;
 import manager.TaskManager;
 import savedfiles.TaskType;
 import task.Epic;
-import task.Subtask;
 import task.Task;
+import task.Subtask;
 import task.TaskStatus;
 
 
@@ -127,6 +130,18 @@ public class Main {
 
         taskManager.deleteTaskById(1);
         System.out.println("Задачи: " + taskManager.getAllTasks());
+
+        taskManager.createTask(new Task(1, TaskType.TASK, "Task 1", TaskStatus.NEW, "Description 1",
+                Duration.ofHours(1), LocalDateTime.of(2023, 10, 1, 10, 0)));
+        taskManager.createTask(new Task(2, TaskType.TASK, "Task 2", TaskStatus.NEW, "Description 2",
+                Duration.ofHours(1), LocalDateTime.of(2023, 9, 30, 12, 0)));
+        taskManager.createTask(new Task(3, TaskType.TASK, "Task 3", TaskStatus.NEW, "Description 3",
+                Duration.ofHours(1), LocalDateTime.of(2023, 10, 2, 9, 0)));
+
+        Collection<Task> prioritizedTasks = taskManager.getPrioritizedTasks();
+        for (Task task : prioritizedTasks) {
+            System.out.println(task);
+        }
     }
 }
 

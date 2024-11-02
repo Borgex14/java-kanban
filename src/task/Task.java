@@ -1,13 +1,16 @@
 package task;
 import savedfiles.TaskType;
+import java.time.Duration;
+import java.time.LocalDateTime;
 
 public class Task {
-
     private String name;
     private String description;
     private int id;
     private TaskStatus status;
     private TaskType type;
+    private Duration duration;
+    private LocalDateTime startTime;
 
     public Task(String name, TaskStatus status, String description) {
         this.name = name;
@@ -23,11 +26,45 @@ public class Task {
         this.type = type;
     }
 
+    public Task(int id, TaskType type, String name, TaskStatus status, String description, Duration duration,
+                LocalDateTime startTime) {
+        this.name = name;
+        this.description = description;
+        this.id = id;
+        this.status = status;
+        this.type = type;
+        this.duration = duration;
+        this.startTime = startTime;
+    }
+
     public Task(String name, String description, int id, TaskStatus status) {
         this.name = name;
         this.description = description;
         this.id = id;
         this.status = status;
+    }
+
+    public LocalDateTime getEndTime() {
+        if (startTime == null || duration == null) {
+            return null;
+        }
+        return startTime.plus(duration);
+    }
+
+    public Duration getDuration() {
+        return duration;
+    }
+
+    public void setDuration(Duration duration) {
+        this.duration = duration;
+    }
+
+    public LocalDateTime getStartTime() {
+        return startTime;
+    }
+
+    public void setStartTime(LocalDateTime startTime) {
+        this.startTime = startTime;
     }
 
     public String getName() {
@@ -66,6 +103,19 @@ public class Task {
         return type;
     }
 
+    public boolean isOverlapping(Task other) {
+        if (this.startTime == null || other.startTime == null || this.duration == null || other.duration == null) {
+            return false;
+        }
+
+        LocalDateTime thisStart = this.startTime;
+        LocalDateTime thisEnd = this.getEndTime();
+        LocalDateTime otherStart = other.startTime;
+        LocalDateTime otherEnd = other.getEndTime();
+
+        return (thisStart.isBefore(otherEnd) && otherStart.isBefore(thisEnd));
+    }
+
     @Override
     public boolean equals(Object obj) {
         if (this == obj) return true;
@@ -81,12 +131,13 @@ public class Task {
 
     @Override
     public String toString() {
-        return String.format("%d,%s,%s,%s,%s", id, type.name(), name, status.name(), description);
+        return String.format("%d,%s,%s,%s,%s", id, type.name(), name, status.name(), description, duration.toMinutes(),
+                startTime);
     }
 
     public static Task fromString(String value) {
         String[] fields = value.split(",");
-        if (fields.length < 5) {
+        if (fields.length < 7) {
             throw new IllegalArgumentException("Неправильный формат строки для задачи: " + value);
         }
         int id = Integer.parseInt(fields[0]);
@@ -94,14 +145,17 @@ public class Task {
         String name = fields[2];
         TaskStatus status = TaskStatus.valueOf(fields[3]);
         String description = fields[4];
-        if (fields.length > 5 && type == TaskType.SUBTASK) {
-            int parentId = Integer.parseInt(fields[5]);
-            return new Subtask(id,type, name, status, description, parentId);
+        Duration duration = Duration.ofMinutes(Long.parseLong(fields[5]));
+        LocalDateTime startTime = LocalDateTime.parse(fields[6]);
+        if (fields.length > 7 && type == TaskType.SUBTASK) {
+            int parentId = Integer.parseInt(fields[7]);
+            return new Subtask(id, type, name, status, description, parentId, duration, startTime);
         } else {
             if (type == TaskType.EPIC) {
-                return new Epic(id, type, name, status, description);
+                LocalDateTime endTime = LocalDateTime.parse(fields[7]);
+                return new Epic(id, type, name, status, description, duration, startTime, endTime);
             } else {
-                return new Task(id, type, name, status, description);
+                return new Task(id, type, name, status, description, duration, startTime);
             }
         }
     }
