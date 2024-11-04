@@ -14,14 +14,11 @@ public class HistoryHandler extends BaseHttpHandler implements HttpHandler {
     @Override
     public void handle(HttpExchange exchange) throws IOException {
         try {
-            switch (exchange.getRequestMethod()) {
-                case "GET":
-                    String jsonHistory = gson.toJson(taskManager.getHistory());
-                    sendText(exchange, jsonHistory, 200);
-                    break;
-
-                default:
-                    sendText(exchange, "{\"error\":\"Method not supported\"}", 405);
+            if (exchange.getRequestMethod().equals("GET")) {
+                String jsonHistory = gson.toJson(taskManager.getHistory());
+                sendText(exchange, jsonHistory, 200);
+            } else {
+                sendText(exchange, "{\"error\":\"Method not supported\"}", 405);
             }
         } catch (NotFoundException e) {
             sendNotFound(exchange);
