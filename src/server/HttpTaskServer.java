@@ -18,7 +18,7 @@ public class HttpTaskServer {
 
     public HttpTaskServer(int port) throws IOException {
         this.server = HttpServer.create(new InetSocketAddress(port), 0);
-        this.taskManager = Managers.getDefault(); // Получаем экземпляр менеджера задач
+        this.taskManager = Managers.getDefault();
         server.createContext("/tasks", new TasksHandler(taskManager));
         server.createContext("/subtasks", new SubtasksHandler(taskManager));
         server.createContext("/epics", new EpicsHandler(taskManager));

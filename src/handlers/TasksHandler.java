@@ -14,6 +14,7 @@ public class TasksHandler extends BaseHttpHandler implements HttpHandler {
 
     @Override
     public void handle(HttpExchange exchange) throws IOException {
+        System.out.println("Received request: " + exchange.getRequestMethod());
         try {
             switch (exchange.getRequestMethod()) {
                 case "GET":
