@@ -26,7 +26,8 @@ public class SubtasksHandler extends BaseHttpHandler implements HttpHandler {
                     sendText(exchange, gson.toJson(newSubtask), 201);
                     break;
                 case "DELETE":
-                    // Реализация удаления задачи
+                    taskManager.deleteSubtasks();
+                    sendText(exchange, "{\"message\":\"All subtasks deleted\"}", 200);
                     break;
                 default:
                     sendText(exchange, "{\"error\":\"Method not supported\"}", 405);

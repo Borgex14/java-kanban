@@ -26,7 +26,8 @@ public class TasksHandler extends BaseHttpHandler implements HttpHandler {
                     sendText(exchange, gson.toJson(newTask), 201);
                     break;
                 case "DELETE":
-                    // Реализация удаления задачи
+                    taskManager.deleteAllTasks();
+                    sendText(exchange, "{\"message\":\"All tasks deleted\"}", 200);
                     break;
                 default:
                     sendText(exchange, "{\"error\":\"Method not supported\"}", 405);

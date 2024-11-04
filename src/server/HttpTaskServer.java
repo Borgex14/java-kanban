@@ -31,10 +31,16 @@ public class HttpTaskServer {
         System.out.println("Сервер запущен на порту " + server.getAddress().getPort());
     }
 
+    public void stop() {
+        server.stop(0);
+        System.out.println("Server stopped.");
+    }
+
     public static void main(String[] args) {
         try {
             HttpTaskServer server = new HttpTaskServer(8080);
             server.start();
+            server.stop();
         } catch (IOException e) {
             e.printStackTrace();
         }

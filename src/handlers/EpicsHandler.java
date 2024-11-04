@@ -1,7 +1,6 @@
 package handlers;
 
 import com.sun.net.httpserver.HttpExchange;
-import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 import java.io.IOException;
 import manager.TaskManager;
@@ -27,7 +26,8 @@ public class EpicsHandler extends BaseHttpHandler implements HttpHandler {
                     sendText(exchange, gson.toJson(newEpic), 201);
                     break;
                 case "DELETE":
-                    // Реализация удаления задачи
+                    taskManager.deleteEpics();
+                    sendText(exchange, "{\"message\":\"All Epics deleted\"}", 200);
                     break;
                 default:
                     sendText(exchange, "{\"error\":\"Method not supported\"}", 405);
