@@ -1,5 +1,6 @@
 package handlers;
 
+import com.google.gson.Gson;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 import java.io.IOException;
@@ -7,9 +8,11 @@ import manager.TaskManager;
 import task.Epic;
 
 public class EpicsHandler extends BaseHttpHandler implements HttpHandler {
+    private final Gson gson;
 
-    public EpicsHandler(TaskManager taskManager) {
+    public EpicsHandler(TaskManager taskManager, Gson gson) {
         super(taskManager);
+        this.gson = gson;
     }
 
     @Override

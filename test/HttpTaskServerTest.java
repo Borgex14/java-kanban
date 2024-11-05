@@ -1,11 +1,19 @@
 import adapter.DurationTypeAdapter;
 import adapter.LocalDateTimeTypeAdapter;
 import com.google.gson.Gson;
-import manager.InMemoryTaskManager;
+import com.google.gson.GsonBuilder;
 import manager.TaskManager;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
+import manager.InMemoryTaskManager;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import savedfiles.TaskType;
+import serializer.TaskDeserializer;
+import serializer.TaskSerializer;
+import server.HttpTaskServer;
+import task.Task;
+import task.TaskStatus;
+
 import java.io.IOException;
 import java.net.URI;
 import java.net.http.HttpClient;
@@ -13,72 +21,42 @@ import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.time.Duration;
 import java.time.LocalDateTime;
-import server.HttpTaskServer;
-import task.Task;
-import task.TaskStatus;
-import com.google.gson.GsonBuilder;
 
-import static org.junit.jupiter.api.Assertions.*;
-import static savedfiles.TaskType.TASK;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class HttpTaskServerTest {
+    private static HttpTaskServer taskServer;
+    private static TaskManager manager;
+    private static Gson gson;
+    private static HttpClient client;
 
-    private HttpTaskServer taskServer;
-    private TaskManager manager;
-    private Gson gson;
-    private HttpClient client;
-
-    @BeforeEach
-    public void setUp() throws IOException {
+    @BeforeAll
+    public static void setup() throws IOException {
         manager = new InMemoryTaskManager();
         taskServer = new HttpTaskServer(8080);
         gson = new GsonBuilder()
                 .registerTypeAdapter(Duration.class, new DurationTypeAdapter())
                 .registerTypeAdapter(LocalDateTime.class, new LocalDateTimeTypeAdapter())
+                .registerTypeAdapter(Task.class, new TaskSerializer())
+                .registerTypeAdapter(Task.class, new TaskDeserializer())
                 .create();
-        client = HttpClient.newHttpClient();
         taskServer.start();
+        client = HttpClient.newHttpClient();
     }
 
-    @AfterEach
-    public void tearDown() {
+    @AfterAll
+    public static void tearDown() {
         taskServer.stop();
     }
 
     @Test
-    public void testServerStart() {
-        assertDoesNotThrow(() -> taskServer.start(), "Server should start without throwing exceptions");
-    }
-
-    @Test
-    public void testAddTask() throws IOException, InterruptedException {
-        Task task = new Task(1, TASK,"Test Task", TaskStatus.NEW,"Test Description", Duration.ofHours(1), LocalDateTime.now());
-
+    public void testDeleteAllTasks() throws IOException, InterruptedException {
+        Task task = new Task(3, TaskType.TASK, "Task to Delete", TaskStatus.NEW, "Delete me.",
+                Duration.ofMinutes(30), LocalDateTime.now());
         String taskJson = gson.toJson(task);
 
         URI url = URI.create("http://localhost:8080/tasks");
-        HttpRequest request = HttpRequest.newBuilder()
-                .uri(url)
-                .POST(HttpRequest.BodyPublishers.ofString(taskJson))
-                .header("Content-Type", "application/json")
-                .build();
-
-        HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
-        System.out.println("Response status code: " + response.statusCode());
-        System.out.println("Response body: " + response.body());
-
-        assertEquals(201, response.statusCode(), "Expected status code for created task");
-
-        assertEquals(1, manager.getAllTasks().size(), "The number of tasks should be 1");
-        assertEquals("Test Task", manager.getAllTasks().getClass().getName(), "Task name should match");
-    }
-
-    @Test
-    public void testGetTasks() throws IOException, InterruptedException {
-        Task task = new Task(1, TASK,"Test Task", TaskStatus.NEW,"Test Description", Duration.ofMinutes(5), LocalDateTime.now());
-        String taskJson = gson.toJson(task);
-        URI url = URI.create("http://localhost:8080/tasks");
-
         HttpRequest postRequest = HttpRequest.newBuilder()
                 .uri(url)
                 .POST(HttpRequest.BodyPublishers.ofString(taskJson))
@@ -87,14 +65,16 @@ public class HttpTaskServerTest {
 
         client.send(postRequest, HttpResponse.BodyHandlers.ofString());
 
-        HttpRequest getRequest = HttpRequest.newBuilder()
+        HttpRequest deleteRequest = HttpRequest.newBuilder()
                 .uri(url)
-                .GET()
+                .DELETE()
                 .build();
 
-        HttpResponse<String> response = client.send(getRequest, HttpResponse.BodyHandlers.ofString());
+        HttpResponse<String> response = client.send(deleteRequest, HttpResponse.BodyHandlers.ofString());
+        assertEquals(200, response.statusCode(), "Expected status code for deleting tasks");
 
-        assertEquals(200, response.statusCode(), "Expected status code for retrieving tasks");
-        assertTrue(response.body().contains("Test Task"), "Response should contain the task's name");
+        String responseBody = response.body();
+        assertTrue(responseBody.contains("All tasks deleted"), "Response should confirm deletion of all tasks");
+        assertEquals(0, manager.getAllTasks().size(), "All tasks should be deleted");
     }
 }

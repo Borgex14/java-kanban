@@ -12,9 +12,10 @@ import task.Task;
 
 public class TasksHandler extends BaseHttpHandler implements HttpHandler {
 
-    private Gson gson = new Gson();
-    public TasksHandler(TaskManager taskManager) {
+    private final Gson gson;
+    public TasksHandler(TaskManager taskManager, Gson gson) {
         super(taskManager);
+        this.gson = gson;
     }
 
     @Override
