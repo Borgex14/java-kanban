@@ -21,9 +21,9 @@ public class TasksHandler extends BaseHttpHandler implements HttpHandler {
     @Override
     public void handle(HttpExchange exchange) throws IOException {
         System.out.println("Received request: " + exchange.getRequestMethod());
-        String rquestMethod = exchange.getRequestMethod();
+        String requestMethod = exchange.getRequestMethod();
         try {
-            switch (rquestMethod) {
+            switch (requestMethod) {
                 case "GET":
                     String jsonTasks = gson.toJson(taskManager.getAllTasks());
                     sendText(exchange, jsonTasks, 200);

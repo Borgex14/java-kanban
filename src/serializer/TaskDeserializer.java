@@ -22,7 +22,7 @@ public class TaskDeserializer implements JsonDeserializer<Task> {
         String name = jsonObject.get("name").getAsString();
         TaskStatus status = TaskStatus.valueOf(jsonObject.get("status").getAsString()); // Убедитесь, что есть соответствие
         String description = jsonObject.get("description").getAsString();
-        Duration duration = Duration.parse(jsonObject.get("duration").getAsString());
+        Duration duration = Duration.parse(jsonObject.get("duration").getAsString()); // Предполагается ISO-формат
         LocalDateTime startTime = LocalDateTime.parse(jsonObject.get("startTime").getAsString());
 
         return new Task(id, type, name, status, description, duration, startTime);
