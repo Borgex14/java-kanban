@@ -13,6 +13,7 @@ import task.Task;
 public class TasksHandler extends BaseHttpHandler implements HttpHandler {
 
     private final Gson gson;
+
     public TasksHandler(TaskManager taskManager, Gson gson) {
         super(taskManager);
         this.gson = gson;
@@ -31,7 +32,7 @@ public class TasksHandler extends BaseHttpHandler implements HttpHandler {
                 case "POST":
                     InputStream requestBodyStream = exchange.getRequestBody();
                     byte[] requestBodyBites = requestBodyStream.readAllBytes();
-                    String requestBody = new String (requestBodyBites, StandardCharsets.UTF_8);
+                    String requestBody = new String(requestBodyBites, StandardCharsets.UTF_8);
                     Task newTask = gson.fromJson(requestBody, Task.class);
                     System.out.println();
                     taskManager.createTask(newTask);
