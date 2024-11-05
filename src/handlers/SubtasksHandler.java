@@ -10,6 +10,7 @@ import task.Subtask;
 public class SubtasksHandler extends BaseHttpHandler implements HttpHandler {
 
     private final Gson gson;
+
     public SubtasksHandler(TaskManager taskManager, Gson gson) {
         super(taskManager);
         this.gson = gson;
