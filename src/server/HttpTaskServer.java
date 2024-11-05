@@ -1,7 +1,9 @@
 package server;
 
+import adapter.DurationTypeAdapter;
+import adapter.LocalDateTimeTypeAdapter;
+import com.google.gson.Gson;
 import com.sun.net.httpserver.HttpServer;
-
 import handlers.EpicsHandler;
 import handlers.HistoryHandler;
 import handlers.PrioritizedHandler;
@@ -9,40 +11,50 @@ import handlers.SubtasksHandler;
 import handlers.TasksHandler;
 import java.io.IOException;
 import java.net.InetSocketAddress;
+import java.time.Duration;
+import java.time.LocalDateTime;
 import manager.Managers;
 import manager.TaskManager;
+import com.google.gson.GsonBuilder;
+import serializer.TaskDeserializer;
+import serializer.TaskSerializer;
+import task.Task;
 
 public class HttpTaskServer {
-    private final HttpServer server;
+    private final int port;
+    private final Gson gson;
+    private HttpServer httpServer;
     private final TaskManager taskManager;
 
-    public HttpTaskServer(int port) throws IOException {
-        this.server = HttpServer.create(new InetSocketAddress(port), 0);
-        this.taskManager = Managers.getDefault();
-        server.createContext("/tasks", new TasksHandler(taskManager));
-        server.createContext("/subtasks", new SubtasksHandler(taskManager));
-        server.createContext("/epics", new EpicsHandler(taskManager));
-        server.createContext("/history", new HistoryHandler(taskManager));
-        server.createContext("/prioritized", new PrioritizedHandler(taskManager));
+    public HttpTaskServer(int port) {
+        this.port = port;
+        taskManager = Managers.getDefault();
+        this.gson = new GsonBuilder()
+                .registerTypeAdapter(Duration.class, new DurationTypeAdapter())
+                .registerTypeAdapter(LocalDateTime.class, new LocalDateTimeTypeAdapter())
+                .registerTypeAdapter(Task.class, new TaskSerializer())
+                .registerTypeAdapter(Task.class, new TaskDeserializer())
+                .create();
     }
 
-    public void start() {
-        server.start();
-        System.out.println("Сервер запущен на порту " + server.getAddress().getPort());
+    public void start() throws IOException {
+        httpServer = HttpServer.create(new InetSocketAddress("localhost", 8080), 0);
+        httpServer.createContext("/tasks", new TasksHandler(taskManager));
+        httpServer.createContext("/subtasks", new SubtasksHandler(taskManager));
+        httpServer.createContext("/epics", new EpicsHandler(taskManager));
+        httpServer.createContext("/history", new HistoryHandler(taskManager));
+        httpServer.createContext("/prioritized", new PrioritizedHandler(taskManager));
+        httpServer.start();
+        System.out.println("Сервер запущен на порту " + httpServer.getAddress().getPort());
     }
 
     public void stop() {
-        server.stop(0);
+        httpServer.stop(0);
         System.out.println("Server stopped.");
     }
 
-    public static void main(String[] args) {
-        try {
+    public static void main(String[] args) throws IOException {
             HttpTaskServer server = new HttpTaskServer(8080);
             server.start();
-            server.stop();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
     }
 }

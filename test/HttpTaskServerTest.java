@@ -52,8 +52,7 @@ public class HttpTaskServerTest {
 
     @Test
     public void testAddTask() throws IOException, InterruptedException {
-        Task task = new Task(1, TASK,"Test Task", TaskStatus.NEW,"Test Description",
-                Duration.ofMinutes(5), LocalDateTime.now());
+        Task task = new Task(1, TASK,"Test Task", TaskStatus.NEW,"Test Description", Duration.ofHours(1), LocalDateTime.now());
 
         String taskJson = gson.toJson(task);
 
@@ -65,6 +64,8 @@ public class HttpTaskServerTest {
                 .build();
 
         HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+        System.out.println("Response status code: " + response.statusCode());
+        System.out.println("Response body: " + response.body());
 
         assertEquals(201, response.statusCode(), "Expected status code for created task");
 

@@ -1,13 +1,18 @@
 package handlers;
 
+import com.google.gson.Gson;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.nio.charset.StandardCharsets;
 import manager.TaskManager;
 import task.Task;
 
 public class TasksHandler extends BaseHttpHandler implements HttpHandler {
 
+    private Gson gson = new Gson();
     public TasksHandler(TaskManager taskManager) {
         super(taskManager);
     }
@@ -15,16 +20,25 @@ public class TasksHandler extends BaseHttpHandler implements HttpHandler {
     @Override
     public void handle(HttpExchange exchange) throws IOException {
         System.out.println("Received request: " + exchange.getRequestMethod());
+        String rquestMethod = exchange.getRequestMethod();
         try {
-            switch (exchange.getRequestMethod()) {
+            switch (rquestMethod) {
                 case "GET":
                     String jsonTasks = gson.toJson(taskManager.getAllTasks());
                     sendText(exchange, jsonTasks, 200);
                     break;
                 case "POST":
-                    Task newTask = readJson(exchange, Task.class);
+                    InputStream requestBodyStream = exchange.getRequestBody();
+                    byte[] requestBodyBites = requestBodyStream.readAllBytes();
+                    String requestBody = new String (requestBodyBites, StandardCharsets.UTF_8);
+                    Task newTask = gson.fromJson(requestBody, Task.class);
+                    System.out.println();
                     taskManager.createTask(newTask);
-                    sendText(exchange, gson.toJson(newTask), 201);
+                    String responseBody = gson.toJson(newTask);
+                    exchange.sendResponseHeaders(201, responseBody.length());
+                    try (OutputStream responseBodyStream = exchange.getResponseBody()) {
+                        responseBodyStream.write(responseBody.getBytes(StandardCharsets.UTF_8));
+                    }
                     break;
                 case "DELETE":
                     taskManager.deleteAllTasks();
@@ -38,6 +52,7 @@ public class TasksHandler extends BaseHttpHandler implements HttpHandler {
         } catch (NotAcceptableException e) {
             sendHasInteractions(exchange);
         } catch (Exception e) {
+            e.printStackTrace();
             sendText(exchange, "{\"error\":\"Internal server error\"}", 500);
         }
     }
