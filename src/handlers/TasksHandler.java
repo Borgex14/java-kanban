@@ -76,8 +76,6 @@ public class TasksHandler extends BaseHttpHandler implements HttpHandler {
                 default:
                     sendText(exchange, "{\"error\":\"Method not supported\"}", 405);
             }
-        } catch (NumberFormatException e) {
-            sendText(exchange, "{\"error\":\"Invalid ID format\"}", 400);
         } catch (NotFoundException e) {
             sendNotFound(exchange);
         } catch (NotAcceptableException e) {

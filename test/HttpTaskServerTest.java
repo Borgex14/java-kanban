@@ -38,8 +38,6 @@ public class HttpTaskServerTest {
         gson = new GsonBuilder()
                 .registerTypeAdapter(Duration.class, new DurationTypeAdapter())
                 .registerTypeAdapter(LocalDateTime.class, new LocalDateTimeTypeAdapter())
-                .registerTypeAdapter(Task.class, new TaskSerializer())
-                .registerTypeAdapter(Task.class, new TaskDeserializer())
                 .create();
         taskServer.start();
         client = HttpClient.newHttpClient();
