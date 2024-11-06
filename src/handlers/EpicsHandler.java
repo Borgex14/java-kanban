@@ -4,6 +4,7 @@ import com.google.gson.Gson;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 import java.io.IOException;
+import java.net.URI;
 import manager.TaskManager;
 import task.Epic;
 
@@ -18,20 +19,48 @@ public class EpicsHandler extends BaseHttpHandler implements HttpHandler {
 
     @Override
     public void handle(HttpExchange exchange) throws IOException {
+        URI uri = exchange.getRequestURI();
+        String path = uri.getPath();
+        String[] pathSegments = path.split("/");
         try {
             switch (exchange.getRequestMethod()) {
                 case "GET":
-                    String jsonEpics = gson.toJson(taskManager.getAllEpics());
-                    sendText(exchange, jsonEpics, 200);
+                    if (pathSegments.length == 3 && pathSegments[2].equals("epics")) {
+                        String jsonEpics = gson.toJson(taskManager.getAllEpics());
+                        sendText(exchange, jsonEpics, 200);
+                    } else if (pathSegments.length == 4 && pathSegments[2].equals("epics")) {
+                        int epicId = Integer.parseInt(pathSegments[3]);
+                        Epic epic = taskManager.getEpicById(epicId);
+                        if (epic != null) {
+                            sendText(exchange, gson.toJson(epic), 200);
+                        } else {
+                            sendText(exchange, "{\"error\":\"Epic not found\"}", 404);
+                        }
+                    } else {
+                        sendText(exchange, "{\"error\":\"Invalid path\"}", 400);
+                    }
                     break;
                 case "POST":
                     Epic newEpic = readJson(exchange, Epic.class);
-                    taskManager.createEpic(newEpic);
-                    sendText(exchange, gson.toJson(newEpic), 201);
+                    if (newEpic.getId() != null) {
+                        taskManager.updateEpic(newEpic);
+                        sendText(exchange, gson.toJson(newEpic), 200);
+                    } else {
+                        taskManager.createEpic(newEpic);
+                        sendText(exchange, gson.toJson(newEpic), 201);
+                    }
                     break;
                 case "DELETE":
-                    taskManager.deleteEpics();
-                    sendText(exchange, "{\"message\":\"All Epics deleted\"}", 200);
+                    if (pathSegments.length == 3 && pathSegments[2].equals("epics")) {
+                        taskManager.deleteEpics();
+                        sendText(exchange, "{\"message\":\"All Epics deleted\"}", 200);
+                    } else if (pathSegments.length == 4 && pathSegments[2].equals("epics")) {
+                        int epicId = Integer.parseInt(pathSegments[3]);
+                        taskManager.deleteEpicById(epicId);
+                        sendText(exchange, "{\"message\":\"Epic deleted\"}", 200);
+                    } else {
+                        sendText(exchange, "{\"error\":\"Invalid path\"}", 400);
+                    }
                     break;
                 default:
                     sendText(exchange, "{\"error\":\"Method not supported\"}", 405);

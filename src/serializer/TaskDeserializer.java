@@ -10,7 +10,7 @@ import java.time.Duration;
 import java.time.LocalDateTime;
 import savedfiles.TaskType;
 import task.Task;
-import task.TaskStatus; // Убедитесь, что TaskStatus доступен
+import task.TaskStatus;
 
 public class TaskDeserializer implements JsonDeserializer<Task> {
     @Override
@@ -20,9 +20,9 @@ public class TaskDeserializer implements JsonDeserializer<Task> {
         int id = jsonObject.get("id").getAsInt();
         TaskType type = TaskType.valueOf(jsonObject.get("type").getAsString());
         String name = jsonObject.get("name").getAsString();
-        TaskStatus status = TaskStatus.valueOf(jsonObject.get("status").getAsString()); // Убедитесь, что есть соответствие
+        TaskStatus status = TaskStatus.valueOf(jsonObject.get("status").getAsString());
         String description = jsonObject.get("description").getAsString();
-        Duration duration = Duration.parse(jsonObject.get("duration").getAsString()); // Предполагается ISO-формат
+        Duration duration = Duration.parse(jsonObject.get("duration").getAsString());
         LocalDateTime startTime = LocalDateTime.parse(jsonObject.get("startTime").getAsString());
 
         return new Task(id, type, name, status, description, duration, startTime);

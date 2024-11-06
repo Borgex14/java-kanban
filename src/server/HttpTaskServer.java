@@ -16,9 +16,7 @@ import java.time.LocalDateTime;
 import manager.Managers;
 import manager.TaskManager;
 import com.google.gson.GsonBuilder;
-import serializer.TaskDeserializer;
-import serializer.TaskSerializer;
-import task.Task;
+
 
 public class HttpTaskServer {
     private final int port;
@@ -32,8 +30,6 @@ public class HttpTaskServer {
         this.gson = new GsonBuilder()
                 .registerTypeAdapter(Duration.class, new DurationTypeAdapter())
                 .registerTypeAdapter(LocalDateTime.class, new LocalDateTimeTypeAdapter())
-                .registerTypeAdapter(Task.class, new TaskSerializer())
-                .registerTypeAdapter(Task.class, new TaskDeserializer())
                 .create();
     }
 
