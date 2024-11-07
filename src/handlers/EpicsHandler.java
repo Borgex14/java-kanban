@@ -42,7 +42,7 @@ public class EpicsHandler extends BaseHttpHandler implements HttpHandler {
                     break;
                 case "POST":
                     Epic newEpic = readJson(exchange, Epic.class);
-                    if (newEpic.getId() != null) {
+                    if (newEpic.getId() != null && newEpic.getId() != 0) {
                         taskManager.updateEpic(newEpic);
                         sendText(exchange, gson.toJson(newEpic), 200);
                     } else {
@@ -51,13 +51,20 @@ public class EpicsHandler extends BaseHttpHandler implements HttpHandler {
                     }
                     break;
                 case "DELETE":
-                    if (pathSegments.length == 3 && pathSegments[2].equals("epics")) {
+                    if (pathSegments.length == 4 && pathSegments[2].equals("epics")) {
+                        try {
+                            int epicId = Integer.parseInt(pathSegments[3]);
+                            if (taskManager.deleteEpicById(epicId)) {
+                                sendText(exchange, "{\"message\":\"Epic deleted\"}", 200);
+                            } else {
+                                sendText(exchange, "{\"error\":\"Epic not found\"}", 404);
+                            }
+                        } catch (NumberFormatException e) {
+                            sendText(exchange, "{\"error\":\"Invalid ID format\"}", 400);
+                        }
+                    } else if (pathSegments.length == 3 && pathSegments[2].equals("epics")) {
                         taskManager.deleteEpics();
-                        sendText(exchange, "{\"message\":\"All Epics deleted\"}", 200);
-                    } else if (pathSegments.length == 4 && pathSegments[2].equals("epics")) {
-                        int epicId = Integer.parseInt(pathSegments[3]);
-                        taskManager.deleteEpicById(epicId);
-                        sendText(exchange, "{\"message\":\"Epic deleted\"}", 200);
+                        sendText(exchange, "{\"message\":\"All epics deleted\"}", 200);
                     } else {
                         sendText(exchange, "{\"error\":\"Invalid path\"}", 400);
                     }

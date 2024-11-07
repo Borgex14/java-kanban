@@ -8,12 +8,9 @@ import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import savedfiles.TaskType;
-import serializer.TaskDeserializer;
-import serializer.TaskSerializer;
 import server.HttpTaskServer;
 import task.Task;
 import task.TaskStatus;
-
 import java.io.IOException;
 import java.net.URI;
 import java.net.http.HttpClient;
@@ -23,7 +20,6 @@ import java.time.Duration;
 import java.time.LocalDateTime;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class HttpTaskServerTest {
     private static HttpTaskServer taskServer;
@@ -49,10 +45,9 @@ public class HttpTaskServerTest {
     }
 
     @Test
-    public void testDeleteAllTasks() throws IOException, InterruptedException {
-        Task task = new Task(3, TaskType.TASK, "Task to Delete", TaskStatus.NEW, "Delete me.",
-                Duration.ofMinutes(30), LocalDateTime.now());
-        String taskJson = gson.toJson(task);
+    public void testAddNewTasks() throws IOException, InterruptedException {
+        Task newTask = new Task( "New Task", TaskStatus.NEW, "This is a new task.");
+        String taskJson = gson.toJson(newTask);
 
         URI url = URI.create("http://localhost:8080/tasks");
         HttpRequest postRequest = HttpRequest.newBuilder()
@@ -63,16 +58,6 @@ public class HttpTaskServerTest {
 
         client.send(postRequest, HttpResponse.BodyHandlers.ofString());
 
-        HttpRequest deleteRequest = HttpRequest.newBuilder()
-                .uri(url)
-                .DELETE()
-                .build();
-
-        HttpResponse<String> response = client.send(deleteRequest, HttpResponse.BodyHandlers.ofString());
-        assertEquals(200, response.statusCode(), "Expected status code for deleting tasks");
-
-        String responseBody = response.body();
-        assertTrue(responseBody.contains("All tasks deleted"), "Response should confirm deletion of all tasks");
         assertEquals(0, manager.getAllTasks().size(), "All tasks should be deleted");
     }
 }

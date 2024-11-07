@@ -48,8 +48,7 @@ public class TasksHandler extends BaseHttpHandler implements HttpHandler {
                     byte[] requestBodyBites = requestBodyStream.readAllBytes();
                     String requestBody = new String(requestBodyBites, StandardCharsets.UTF_8);
                     Task newTask = gson.fromJson(requestBody, Task.class);
-
-                    if (newTask.getId() != null) {
+                    if (newTask.getId() != 0) {
                         taskManager.updateTask(newTask);
                         sendText(exchange, gson.toJson(newTask), 200);
                     } else {
@@ -63,9 +62,16 @@ public class TasksHandler extends BaseHttpHandler implements HttpHandler {
                     break;
                 case "DELETE":
                     if (pathSegments.length == 4 && pathSegments[2].equals("tasks")) {
-                        int taskId = Integer.parseInt(pathSegments[3]);
-                        taskManager.deleteTaskById(taskId);
-                        sendText(exchange, "{\"message\":\"Task deleted\"}", 200);
+                        try {
+                            int taskId = Integer.parseInt(pathSegments[3]);
+                            if (taskManager.deleteTaskById(taskId)) {
+                                sendText(exchange, "{\"message\":\"Task deleted\"}", 200);
+                            } else {
+                                sendText(exchange, "{\"error\":\"Task not found\"}", 404);
+                            }
+                        } catch (NumberFormatException e) {
+                            sendText(exchange, "{\"error\":\"Invalid ID format\"}", 400);
+                        }
                     } else if (pathSegments.length == 3 && pathSegments[2].equals("tasks")) {
                         taskManager.deleteAllTasks();
                         sendText(exchange, "{\"message\":\"All tasks deleted\"}", 200);
@@ -76,6 +82,8 @@ public class TasksHandler extends BaseHttpHandler implements HttpHandler {
                 default:
                     sendText(exchange, "{\"error\":\"Method not supported\"}", 405);
             }
+        } catch (NumberFormatException e) {
+            sendText(exchange, "{\"error\":\"Invalid ID format\"}", 400);
         } catch (NotFoundException e) {
             sendNotFound(exchange);
         } catch (NotAcceptableException e) {

@@ -42,7 +42,7 @@ public class SubtasksHandler extends BaseHttpHandler implements HttpHandler {
                     break;
                 case "POST":
                     Subtask newSubtask = readJson(exchange, Subtask.class);
-                    if (newSubtask.getId() != null) {
+                    if (newSubtask.getId() != null && newSubtask.getId() != 0) {
                         taskManager.updateSubtask(newSubtask);
                         sendText(exchange, gson.toJson(newSubtask), 200);
                     } else {
@@ -52,9 +52,16 @@ public class SubtasksHandler extends BaseHttpHandler implements HttpHandler {
                     break;
                 case "DELETE":
                     if (pathSegments.length == 4 && pathSegments[2].equals("subtasks")) {
-                        int subtaskId = Integer.parseInt(pathSegments[3]);
-                        taskManager.deleteSubtaskById(subtaskId);
-                        sendText(exchange, "{\"message\":\"Subtask deleted\"}", 200);
+                        try {
+                            int subtaskId = Integer.parseInt(pathSegments[3]);
+                            if (taskManager.deleteSubtaskById(subtaskId)) {
+                                sendText(exchange, "{\"message\":\"Subtask deleted\"}", 200);
+                            } else {
+                                sendText(exchange, "{\"error\":\"Subtask not found\"}", 404);
+                            }
+                        } catch (NumberFormatException e) {
+                            sendText(exchange, "{\"error\":\"Invalid ID format\"}", 400);
+                        }
                     } else if (pathSegments.length == 3 && pathSegments[2].equals("subtasks")) {
                         taskManager.deleteSubtasks();
                         sendText(exchange, "{\"message\":\"All subtasks deleted\"}", 200);

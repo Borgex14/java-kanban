@@ -41,11 +41,11 @@ public interface TaskManager {
 
     void updateSubtask(Subtask subtask);
 
-    void deleteTaskById(int id);
+    boolean deleteTaskById(int id);
 
-    void deleteEpicById(int id);
+    boolean deleteEpicById(int id);
 
-    void deleteSubtaskById(int id);
+    boolean deleteSubtaskById(int id);
 
     List<Subtask> getSubtasksOfEpic(int id);
 

@@ -223,7 +223,7 @@ public class InMemoryTaskManager implements TaskManager {
     }
 
     @Override
-    public void deleteTaskById(int id) {
+    public boolean deleteTaskById(int id) {
         Task task = tasks.remove(id);
         historyManager.remove(id);
         if (task != null) {
@@ -232,10 +232,11 @@ public class InMemoryTaskManager implements TaskManager {
         } else {
             System.out.println("Задача с ID " + id + " не существует. Удаление невозможно.");
         }
+        return false;
     }
 
     @Override
-    public void deleteEpicById(int id) {
+    public boolean deleteEpicById(int id) {
         if (epics.containsKey(id)) {
             Epic epic = epics.get(id);
             epic.getSubtasks().forEach(subtask -> {
@@ -249,10 +250,11 @@ public class InMemoryTaskManager implements TaskManager {
         } else {
             System.out.println("Эпик с ID " + id + " не существует. Удаление невозможно.");
         }
+        return false;
     }
 
     @Override
-    public void deleteSubtaskById(int id) {
+    public boolean deleteSubtaskById(int id) {
         Subtask subtask = subtasks.remove(id);
         historyManager.remove(id);
         if (subtask != null) {
@@ -265,6 +267,7 @@ public class InMemoryTaskManager implements TaskManager {
         } else {
             System.out.println("Подзадача с ID " + id + " не существует. Удаление невоможно.");
         }
+        return false;
     }
 
     @Override
