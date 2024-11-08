@@ -25,11 +25,11 @@ public class EpicsHandler extends BaseHttpHandler implements HttpHandler {
         try {
             switch (exchange.getRequestMethod()) {
                 case "GET":
-                    if (pathSegments.length == 3 && pathSegments[2].equals("epics")) {
+                    if (pathSegments.length == 2 && pathSegments[1].equals("epics")) {
                         String jsonEpics = gson.toJson(taskManager.getAllEpics());
                         sendText(exchange, jsonEpics, 200);
-                    } else if (pathSegments.length == 4 && pathSegments[2].equals("epics")) {
-                        int epicId = Integer.parseInt(pathSegments[3]);
+                    } else if (pathSegments.length == 3 && pathSegments[1].equals("epics")) {
+                        int epicId = Integer.parseInt(pathSegments[2]);
                         Epic epic = taskManager.getEpicById(epicId);
                         if (epic != null) {
                             sendText(exchange, gson.toJson(epic), 200);
@@ -51,9 +51,9 @@ public class EpicsHandler extends BaseHttpHandler implements HttpHandler {
                     }
                     break;
                 case "DELETE":
-                    if (pathSegments.length == 4 && pathSegments[2].equals("epics")) {
+                    if (pathSegments.length == 3 && pathSegments[1].equals("epics")) {
                         try {
-                            int epicId = Integer.parseInt(pathSegments[3]);
+                            int epicId = Integer.parseInt(pathSegments[2]);
                             if (taskManager.deleteEpicById(epicId)) {
                                 sendText(exchange, "{\"message\":\"Epic deleted\"}", 200);
                             } else {
@@ -62,7 +62,7 @@ public class EpicsHandler extends BaseHttpHandler implements HttpHandler {
                         } catch (NumberFormatException e) {
                             sendText(exchange, "{\"error\":\"Invalid ID format\"}", 400);
                         }
-                    } else if (pathSegments.length == 3 && pathSegments[2].equals("epics")) {
+                    } else if (pathSegments.length == 2 && pathSegments[1].equals("epics")) {
                         taskManager.deleteEpics();
                         sendText(exchange, "{\"message\":\"All epics deleted\"}", 200);
                     } else {

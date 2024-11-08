@@ -28,11 +28,11 @@ public class TasksHandler extends BaseHttpHandler implements HttpHandler {
         try {
             switch (requestMethod) {
                 case "GET":
-                    if (pathSegments.length == 3 && pathSegments[2].equals("tasks")) {
+                    if (pathSegments.length == 2 && pathSegments[1].equals("tasks")) {
                         String jsonTasks = gson.toJson(taskManager.getAllTasks());
                         sendText(exchange, jsonTasks, 200);
-                    } else if (pathSegments.length == 4 && pathSegments[2].equals("tasks")) {
-                        int taskId = Integer.parseInt(pathSegments[3]);
+                    } else if (pathSegments.length == 3 && pathSegments[1].equals("tasks")) {
+                        int taskId = Integer.parseInt(pathSegments[2]);
                         Task task = taskManager.getTaskById(taskId);
                         if (task != null) {
                             sendText(exchange, gson.toJson(task), 200);
@@ -61,9 +61,9 @@ public class TasksHandler extends BaseHttpHandler implements HttpHandler {
                     }
                     break;
                 case "DELETE":
-                    if (pathSegments.length == 4 && pathSegments[2].equals("tasks")) {
+                    if (pathSegments.length == 3 && pathSegments[1].equals("tasks")) {
                         try {
-                            int taskId = Integer.parseInt(pathSegments[3]);
+                            int taskId = Integer.parseInt(pathSegments[2]);
                             if (taskManager.deleteTaskById(taskId)) {
                                 sendText(exchange, "{\"message\":\"Task deleted\"}", 200);
                             } else {
@@ -72,7 +72,7 @@ public class TasksHandler extends BaseHttpHandler implements HttpHandler {
                         } catch (NumberFormatException e) {
                             sendText(exchange, "{\"error\":\"Invalid ID format\"}", 400);
                         }
-                    } else if (pathSegments.length == 3 && pathSegments[2].equals("tasks")) {
+                    } else if (pathSegments.length == 2 && pathSegments[1].equals("tasks")) {
                         taskManager.deleteAllTasks();
                         sendText(exchange, "{\"message\":\"All tasks deleted\"}", 200);
                     } else {
@@ -89,7 +89,6 @@ public class TasksHandler extends BaseHttpHandler implements HttpHandler {
         } catch (NotAcceptableException e) {
             sendHasInteractions(exchange);
         } catch (Exception e) {
-            e.printStackTrace();
             sendText(exchange, "{\"error\":\"Internal server error\"}", 500);
         }
     }

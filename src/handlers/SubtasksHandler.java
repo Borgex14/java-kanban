@@ -25,11 +25,11 @@ public class SubtasksHandler extends BaseHttpHandler implements HttpHandler {
         try {
             switch (exchange.getRequestMethod()) {
                 case "GET":
-                    if (pathSegments.length == 3 && pathSegments[2].equals("subtasks")) {
+                    if (pathSegments.length == 2 && pathSegments[1].equals("subtasks")) {
                         String jsonSubtasks = gson.toJson(taskManager.getAllSubtasks());
                         sendText(exchange, jsonSubtasks, 200);
-                    } else if (pathSegments.length == 4 && pathSegments[2].equals("subtasks")) {
-                        int subtaskId = Integer.parseInt(pathSegments[3]);
+                    } else if (pathSegments.length == 3 && pathSegments[1].equals("subtasks")) {
+                        int subtaskId = Integer.parseInt(pathSegments[2]);
                         Subtask subtask = taskManager.getSubtaskById(subtaskId);
                         if (subtask != null) {
                             sendText(exchange, gson.toJson(subtask), 200);
@@ -51,9 +51,9 @@ public class SubtasksHandler extends BaseHttpHandler implements HttpHandler {
                     }
                     break;
                 case "DELETE":
-                    if (pathSegments.length == 4 && pathSegments[2].equals("subtasks")) {
+                    if (pathSegments.length == 3 && pathSegments[1].equals("subtasks")) {
                         try {
-                            int subtaskId = Integer.parseInt(pathSegments[3]);
+                            int subtaskId = Integer.parseInt(pathSegments[2]);
                             if (taskManager.deleteSubtaskById(subtaskId)) {
                                 sendText(exchange, "{\"message\":\"Subtask deleted\"}", 200);
                             } else {
@@ -62,7 +62,7 @@ public class SubtasksHandler extends BaseHttpHandler implements HttpHandler {
                         } catch (NumberFormatException e) {
                             sendText(exchange, "{\"error\":\"Invalid ID format\"}", 400);
                         }
-                    } else if (pathSegments.length == 3 && pathSegments[2].equals("subtasks")) {
+                    } else if (pathSegments.length == 2 && pathSegments[1].equals("subtasks")) {
                         taskManager.deleteSubtasks();
                         sendText(exchange, "{\"message\":\"All subtasks deleted\"}", 200);
                     } else {
